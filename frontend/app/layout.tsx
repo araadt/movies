@@ -42,7 +42,7 @@ export default function RootLayout({
                   <div id="nav-bar-left" className="flex gap-10 items-center font-semibold">
                     <Link href={"/"}>Films</Link>
                   </div>
-                  <div className="flex w-full justify-end items-center gap-5 me-5">
+                  <div className="flex flex-1 justify-end items-center gap-5 me-5">
                     <p>Foo</p>
                     <p>Bar</p>
                     <p>Baz</p>
