@@ -1,8 +1,7 @@
 // VDR
 
 import { options } from '@/lib/tmdb';
-import Image from 'next/image';
-import { env } from 'process';
+import Link from 'next/link';
 
 type Film = {
     id: number;
@@ -121,24 +120,25 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
             return (
                 <div className={`grid ${gridCols} gap-1`}>
                     {films.sort((a, b) => b.popularity - a.popularity).map((film) => (
-                        <article
-                            key={film.id}
-                            className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
-                            style={{
-                                backgroundImage: `url(https://image.tmdb.org/t/p/w500${film.poster_path})`
-                            }}
-                        >
-                            {/* gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xs group-hover:opacity-100 opacity-20 transition-opacity duration-300" />
+                        <Link href={`/films/${film.id}`} key={film.id}>
+                            <article
+                                className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
+                                style={{
+                                    backgroundImage: `url(https://image.tmdb.org/t/p/w500${film.poster_path})`
+                                }}
+                            >
+                                {/* gradient overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xs group-hover:opacity-100 opacity-20 transition-opacity duration-300" />
 
-                            <div className="flex items-baseline justify-between gap-2">
-                                {/* title */}
-                                <h3 className="text-2xl font-medium text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{film.title}</h3>
+                                <div className="flex items-baseline justify-between gap-2">
+                                    {/* title */}
+                                    <h3 className="text-2xl font-medium text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{film.title}</h3>
 
-                                {/* flag icon -- where it was made */}
-                                <p className="text-sm text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={getFilmDetails(film.id)} data-alt="country of origin">{getFilmDetails(film.id)}</p>
-                            </div>
-                        </article>
+                                    {/* flag icon -- where it was made */}
+                                    <p className="text-sm text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={getFilmDetails(film.id)} data-alt="country of origin">{getFilmDetails(film.id)}</p>
+                                </div>
+                            </article>
+                        </Link>
                     ))}
                 </div>
             );
