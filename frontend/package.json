@@ -1,5 +1,22 @@
 {
+  "name": "test_light-blue-island",
+  "version": "0.0.1",
+  "author": {
+    "name": "Andy van der Raadt",
+    "email": "andy@vanderraadt.codes",
+    "url": "https://andy.vanderraadt.codes"
+  },
+  "description": "A demonstration project for calling the MoviesDB API",
+  "homepage": "https://github.com/araadt/test_light-blue-island#readme",
+  "bugs": {
+    "url": "https://github.com/araadt/test_light-blue-island/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/araadt/test_light-blue-island.git"
+  },
   "private": true,
+  "packageManager": "pnpm@10.5.2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
