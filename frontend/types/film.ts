@@ -1,0 +1,130 @@
+export type FilmDetails = {
+    adult: boolean;
+    backdrop_path: string | null;
+    belongs_to_collection: FilmCollection | null;
+    budget: number;
+    genres: FilmGenre[];
+    homepage: string;
+    id: number;
+    imdb_id: string;
+    origin_country: string[];
+    original_language: string;
+    original_title: string;
+    overview: string;
+    popularity: number;
+    poster_path: string | null;
+    production_companies: ProductionCompany[];
+    production_countries: ProductionCountry[];
+    release_date: string;
+    revenue: number;
+    runtime: number;
+    spoken_languages: SpokenLanguage[];
+    status: string;
+    tagline: string;
+    title: string;
+    video: boolean;
+    vote_average: number;
+    vote_count: number;
+    // Additional fields available through append_to_response
+    alternative_titles?: {
+        titles: AlternativeTitle[];
+    };
+    credits?: {
+        cast: any[]; // TODO: Define proper cast type
+        crew: any[]; // TODO: Define proper crew type
+    };
+    release_dates?: ReleaseDatesResponse;
+    videos?: VideoResponse;
+};
+
+
+
+// Simplified type for film cards and lists
+export type FilmSummary = Pick<FilmDetails,
+    'id' |
+    'title' |
+    'overview' |
+    'popularity' |
+    'poster_path' |
+    'release_date' |
+    'vote_average' |
+    'vote_count' |
+    'origin_country' |
+    'original_language' |
+    'genres'
+>;
+
+export type FilmGenre = {
+    id: number;
+    name: string;
+};
+
+export type ProductionCompany = {
+    id: number;
+    logo_path: string | null;
+    name: string;
+    origin_country: string;
+};
+
+export type ProductionCountry = {
+    iso_3166_1: string;
+    name: string;
+};
+
+export type SpokenLanguage = {
+    english_name: string;
+    iso_639_1: string;
+    name: string;
+};
+
+export type FilmCollection = {
+    id: number;
+    name: string;
+    poster_path: string | null;
+    backdrop_path: string | null;
+};
+
+export type AlternativeTitle = {
+    iso_3166_1: string;
+    title: string;
+    type: string;
+};
+
+export type Video = {
+    iso_639_1: string;
+    iso_3166_1: string;
+    name: string;
+    key: string;
+    site: string;
+    size: number;
+    type: string;
+    official: boolean;
+    published_at: string;
+    id: string;
+};
+
+export type VideoResponse = {
+    id: number;
+    results: Video[];
+};
+
+export type ReleaseType = 1 | 2 | 3 | 4 | 5 | 6; // Premiere | Theatrical (limited) | Theatrical | Digital | Physical | TV
+
+export type ReleaseDate = {
+    certification: string;
+    descriptors: string[];
+    iso_639_1: string;
+    note: string;
+    release_date: string;
+    type: ReleaseType;
+};
+
+export type ReleaseDatesResult = {
+    iso_3166_1: string;
+    release_dates: ReleaseDate[];
+};
+
+export type ReleaseDatesResponse = {
+    id: number;
+    results: ReleaseDatesResult[];
+};
