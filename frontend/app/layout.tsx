@@ -38,27 +38,36 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-4 items-center">
-              <nav id="nav-bar" className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 gap-5 text-sm">
-                  <div id="nav-bar-left" className="flex gap-10 items-center font-semibold">
-                    <Link href={"/"}>Films</Link>
-                  </div>
-                  <div className="flex flex-1 justify-end items-center gap-5 me-5">
-                    <p>Foo</p>
-                    <p>Bar</p>
-                    <p>Baz</p>
-                  </div>
 
-                  <div id="nav-bar-right" className="flex gap-5 items-center">
-                    {/* TODO: Saving this for later; requires heavy refactor */}
-                    <HeaderAuth />
-                    <ThemeSwitcher />
-                  </div>
+          {/* TODO: */}
+          {/* This grid setup is a bit bonkers and needs to be centralized somewhere. */}
+          {/* The goal is to create space for metadata on the sides at larger breakpoints. */}
+
+          <main className="min-h-screen flex flex-col items-center">
+            <nav id="nav-bar" className="w-full flex items-center justify-center border-b border-b-foreground/10 min-h-48 sm:min-h-24 m-0">
+              <div className="w-full text-sm md:text-base
+              grid grid-cols-1 sm:grid-cols-2 grid-flow-row lg:grid-cols-6 3xl:grid-cols-12 gap-2">
+                <div className="flex justify-center sm:justify-start items-center gap-5
+                    col-span-full sm:col-span-1 lg:col-span-2 col-start-1 lg:col-start-2
+                    m-0 p-0 mx-5">
+                  <Link className="text-lg" href={"/"}>Andy's Films</Link>
                 </div>
 
-              </nav>
+                <div className="
+                      flex justify-center sm:justify-end items-center gap-5 
+                      col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
+                    mx-5 p-0 ">
+                  {/* <p>Foo</p>
+                  <p>Bar</p>
+                  <p>Baz</p> */}
+                  <HeaderAuth />
+                  <ThemeSwitcher />
+                </div>
+              </div>
+
+            </nav>
+
+            <div className="flex-1 w-full flex flex-col gap-4 items-center">
               <section id="content" className="flex flex-col gap-16 w-full h-full p-5">
                 {children}
               </section>
@@ -82,6 +91,6 @@ export default function RootLayout({
           </main>
         </ThemeProvider>
       </body>
-    </html>
+    </html >
   );
 }
