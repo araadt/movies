@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme inline (
+  --font-sans: var(--font-sans),
+  --font-inter: var(--font-inter),
+  --font-noto-sans: var(--font-noto-sans),
+  --font-noto-sans-display: var(--font-noto-sans-display),
+)
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -81,5 +88,44 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .font-stretch-ultra-condensed {
+    font-stretch: 50%;
+    font-variation-settings: "wdth" 50;
+  }
+  .font-stretch-extra-condensed {
+    font-stretch: 62.5%;
+    font-variation-settings: "wdth" 62.5;
+  }
+  .font-stretch-condensed {
+    font-stretch: 75%;
+    font-variation-settings: "wdth" 75;
+  }
+  .font-stretch-semi-condensed {
+    font-stretch: 87.5%;
+    font-variation-settings: "wdth" 87.5;
+  }
+  .font-stretch-normal {
+    font-stretch: 100%;
+    font-variation-settings: "wdth" 100;
+  }
+  .font-stretch-semi-expanded {
+    font-stretch: 112.5%;
+    font-variation-settings: "wdth" 112.5;
+  }
+  .font-stretch-expanded {
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+  }
+  .font-stretch-extra-expanded {
+    font-stretch: 150%;
+    font-variation-settings: "wdth" 150;
+  }
+  .font-stretch-ultra-expanded {
+    font-stretch: 200%;
+    font-variation-settings: "wdth" 200;
   }
 }
