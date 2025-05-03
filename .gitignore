@@ -137,3 +137,6 @@ dist
 
 # OSX CRUFT
 .DS_Store
+
+# Vercel
+.vercel
