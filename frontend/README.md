@@ -1,23 +1,49 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+## User Stories and The Ask
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+### Movie Database App
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+Find your next movie or create your watchlist with this App. It include reviews, rating, actors and anything you need to know about the movie.
+This application will help users find their next movie to watch by showing helpful stats
+Resource needed for the project is movie api, examples include Imdb, MovieDB etc.
+ 
+### User Stories:
+- User can see all the latest movie on the front page
+- User scroll down to see all other movies according to release date
+- User can click on any of the movie to go to their own separate page
+- User can then see all about the movie ratings, about, actors present on each separate movie page
+ 
+### Stretch Goals:
+- User can filter movies by partial text string
+- Implement proper pagination
+- User can create an account
+- User can create their own watch list
+- User can review movies
+ 
+### Bonus features:
+- Add some Playwright tests to run your tests automatically
+- Illustrate how we can utilize NextJS for this challenge (Specifically service-side rendering)
+ 
+### Useful links and resources:
+[MovieDB Api](https://developers.themoviedb.org/3)
+ 
+### Evaluation Criteria:
+- Code quality and structure
+- Ability to write clear, maintainable, and reusable code
+- Look and feel of the UI, interactions make sense and flow smoothly
+- (Bonus) Playwright tests
+- (Bonus) NextJS integrations (service-side rendering)
 
-## Features
+## Installation
+
+This applciation environment has been configured using `node` `v22.x`, and uses `[npm](https://www.npmjs.com/)` as it's package manager. With nodejs properly installed, from the `./frontend` folder, you may run the following commands to run the development environment:
+
+```sh
+which node
+npm install
+npm run dev
+```
+
+## Framework Features
 
 - Works across the entire [Next.js](https://nextjs.org) stack
   - App Router
