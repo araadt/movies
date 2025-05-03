@@ -18,6 +18,12 @@ const config = {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['var(--font-sans)'],
+				inter: ['var(--font-inter)'],
+				'noto-sans': ['var(--font-noto-sans)'],
+				'noto-sans-display': ['var(--font-noto-sans-display)'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

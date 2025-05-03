@@ -22,29 +22,33 @@ export const metadata = {
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-sans',
+  variable: '--font-inter',
 })
+
 const WorkSans = Work_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-work',
 })
+
 const NotoSans = Noto_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-noto-sans',
 })
+
 const NotoSansDisplay = Noto_Sans_Display({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-noto-sans-display',
   axes: ['wdth'],
-});
+})
+
 const geistSans = Geist({
   display: "swap",
   subsets: ["latin"],
   variable: '--font-geist',
-});
+})
 
 export default function RootLayout({
   children,
@@ -52,7 +56,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${NotoSansDisplay.className}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${WorkSans.variable} ${NotoSans.variable} ${NotoSansDisplay.variable} ${geistSans.variable} antialiased`}
+      suppressHydrationWarning
+    >
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"

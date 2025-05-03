@@ -1,14 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@theme inline (
-  --font-sans: var(--font-sans),
-  --font-inter: var(--font-inter),
-  --font-noto-sans: var(--font-noto-sans),
-  --font-noto-sans-display: var(--font-noto-sans-display),
-)
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -129,3 +121,15 @@
     font-variation-settings: "wdth" 200;
   }
 }
+
+@layer theme {
+  :root {
+    --font-sans: var(--font-noto-sans);
+    --font-inter: var(--font-inter);
+    --font-noto-sans: var(--font-noto-sans);
+    --font-noto-sans-display: var(--font-noto-sans-display);
+    --font-work: var(--font-work);
+    --font-geist: var(--font-geist);
+  }
+}
+
