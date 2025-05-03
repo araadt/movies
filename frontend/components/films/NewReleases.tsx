@@ -19,7 +19,7 @@ const gridColsMap = {
     5: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
 } as const;
 
-const getFilmDetails = async (filmId: number) => {
+export const getFilmDetails = async (filmId: number) => {
     // quickly get all details for now until I create the flag-component
 
     const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, options);
@@ -70,7 +70,7 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // dump the response if we fail
+        // parse the response
         const data = await response.json();
 
         if (!data.results) {
@@ -86,16 +86,19 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
         if (process.env.NODE_ENV === 'development') {
             console.info(`Fetched ${displayQuantity} films:`, films);
         }
-    } catch (err) {
-        console.error('Error fetching films:', err);
-        error = err instanceof Error ? err.message : 'An unknown error occurred';
+    } catch (error) {
+        console.error('Error fetching films:', error);
+        error = error instanceof Error ? error.message : 'An unknown error occurred';
     }
 
     if (error) {
+        // TODO: Migrate the error display to a generic component
+        console.error('Error fetching film details:', error);
+
         return (
-            <div className="flex items-baseline justify-start gap-2 p-4 bg-destructive/20 text-destructive-foreground border border-destructive rounded-xs">
+            <div className="flex items-baseline justify-start gap-2 p-4 bg-destructive/20 text-destructive-foreground border border-destructive rounded-xs max-w-lg mx-auto">
                 <p>Unfortunately, we had an issue loading your films.</p>
-                <p className="text-xs">{error.toLocaleUpperCase()}</p>
+                <p className="text-xs uppercase">{error}</p>
             </div>
         );
     }
