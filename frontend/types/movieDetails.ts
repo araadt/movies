@@ -1,3 +1,5 @@
+import { MovieCredits } from './movieCredits';
+
 export type FilmDetails = {
     adult: boolean;
     backdrop_path: string | null;
@@ -29,10 +31,7 @@ export type FilmDetails = {
     alternative_titles?: {
         titles: AlternativeTitle[];
     };
-    credits?: {
-        cast: any[]; // TODO: Define proper cast type
-        crew: any[]; // TODO: Define proper crew type
-    };
+    credits?: MovieCredits;
     release_dates?: ReleaseDatesResponse;
     videos?: VideoResponse;
 };
