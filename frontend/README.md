@@ -35,13 +35,33 @@ Resource needed for the project is movie api, examples include Imdb, MovieDB etc
 
 ## Installation
 
-This applciation environment has been configured using `node` `v22.x`, and uses `[npm](https://www.npmjs.com/)` as it's package manager. With nodejs properly installed, from the `./frontend` folder, you may run the following commands to run the development environment:
+This applciation environment has been configured using `node` `v22.x`, and uses `[pnpm](https://pnpm.io/installation)` as it's package manager. With nodejs properly installed, from the `./frontend` folder, you may run the following commands to run the development environment:
+
+```sh
+corepack enable
+corepack prepare pnpm@latest --activate
+pnpm --version
+```
+
+Then,
 
 ```sh
 which node
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
+
+## Dependencies, Libraries and Addons
+> NOTE: TODO: For the moment this is intentionally barebones. This requires further documentation.
+
+For the sake of efficiency, I have included a handful of packages, tools, libraries and add-ons. A high-level overview is as follows:
+
+- [Supabase (Auth)](https://supabase.com/auth) `@supabase/supabase-js`
+   - _Supabase Authentication_ has been chosen to handle the (potential) user auth provider guarding the `./app/protected` route.
+   - This is a stretch goal, for the moment, and knowingly will impact build-size and project complexity, but I intentionally included it with a mindset as the roadmap unfolds.
+- [shadcn/ui](https://ui.shadcn.com/docs)
+   - Purely a pragmatic decision, `shadcn/ui` was selected due to familiarity/comfort with the framework. The intention is to use this for the `Sidebar` and `ScrollArea` components, as current constrants do not make a from-scratch responsive/nested sidebar compoent practical. 
+ - _More to come…_
 
 ## Framework Features
 
