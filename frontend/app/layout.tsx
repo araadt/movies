@@ -1,8 +1,11 @@
-import HeaderAuth from "@/components/header-auth";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+
 import Link from "next/link";
+import Image from "next/image";
+
+import HeaderAuth from "@/components/header-auth";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -56,16 +59,26 @@ export default function RootLayout({
                 </div>
 
               </nav>
-              <section id="content" className="flex flex-col gap-16 w-full p-5">
+              <section id="content" className="flex flex-col gap-16 w-full h-full p-5">
                 {children}
               </section>
 
-              <footer id="footer" className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-                <p>
-                  Footer ipsum
-                </p>
-              </footer>
             </div>
+            <footer id="footer" className="w-full flex items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
+              <div className="flex flex-col gap-1">
+                <p>
+                  Made by Andy | May 2025
+                </p>
+              </div>
+              <div className="flex gap-4 items-center ">
+                <p>
+                  API provided by <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie DB</Link>
+                </p>
+                <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">
+                  <Image src="/assets/logos/tmdb-logo.svg" alt="The Movie DB" width={100} height={100} />
+                </Link>
+              </div>
+            </footer>
           </main>
         </ThemeProvider>
       </body>
