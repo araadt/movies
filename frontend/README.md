@@ -35,12 +35,20 @@ Resource needed for the project is movie api, examples include Imdb, MovieDB etc
 
 ## Installation
 
-This applciation environment has been configured using `node` `v22.x`, and uses `[npm](https://www.npmjs.com/)` as it's package manager. With nodejs properly installed, from the `./frontend` folder, you may run the following commands to run the development environment:
+This applciation environment has been configured using `node` `v22.x`, and uses `[pnpm](https://pnpm.io/installation)` as it's package manager. With nodejs properly installed, from the `./frontend` folder, you may run the following commands to run the development environment:
+
+```sh
+corepack enable
+corepack prepare pnpm@latest --activate
+pnpm --version
+```
+
+Then,
 
 ```sh
 which node
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ## Framework Features
