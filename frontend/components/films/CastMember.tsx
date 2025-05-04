@@ -1,6 +1,7 @@
 'use client';
 
 import { CastCredit } from "@/types/peopleDetails";
+import Link from "next/link";
 
 // Module-level variable to track if we've logged
 let hasLogged = false;
@@ -57,7 +58,9 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
                 const isTopBilled = topBilledCastIds.includes(member.id);
                 return (
                     <p key={member.id} className={`${isTopBilled ? 'text-2xl' : nameSize} font-sans text-foreground font-medium uppercase flex-1  ${index < members.length - 1 ? 'mr-2' : ''}`}>
-                        {member.name}
+                        <Link href={`/people/${member.id}`} className="hover:underline">
+                            {member.name}
+                        </Link>
                         {index < members.length - 1 && ','}
                     </p>
                 );

@@ -1,4 +1,5 @@
 import { CrewCredit } from "@/types/peopleDetails";
+import Link from "next/link";
 
 type CrewMemberProps = {
     crew: CrewCredit[];
@@ -33,7 +34,9 @@ const CrewMember = ({ crew, creditTitle, className, topLevel }: CrewMemberProps)
             <div className="flex flex-col gap-1 items-baseline">
                 {members.map((member, index) => (
                     <p key={member.id} className={`${nameSize} font-sans text-foreground font-medium uppercase self-baseline me-2 ${index < members.length - 1 ? 'mr-2' : ''}`}>
-                        {member.name}
+                        <Link href={`/people/${member.id}`} className="hover:underline">
+                            {member.name}
+                        </Link>
                         {index < members.length - 1 && ','}
                     </p>
                 ))}
