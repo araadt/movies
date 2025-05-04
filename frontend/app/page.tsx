@@ -13,7 +13,7 @@ export default async function Home() {
   return (
     <>
       <Hero />
-      <main className="flex-1 flex flex-col gap-4">
+      <main className="flex-1 flex flex-col gap-4 w-full h-full">
         <NewReleases
           displayQuantity={5}
           variant="cards"
