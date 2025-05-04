@@ -41,11 +41,13 @@ export const PosterOrBioPhoto = ({ film, className }: { film: string, className?
         </article>)
 }
 
-const CastAndCrewTitle = ({ title, className }: { title: string, className?: string }) => {
+export const CastAndCrewTitle = ({ title, className }: { title: string, className?: string }) => {
     return (
         <div className={`flex gap-[.5em] items-baseline me-[1.125em] ${className}`}>
             <h2
                 className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase self-baseline ${className}`}
+                data-id={`credit-title-${title}`}
+                data-type={title}
             >
                 {title}
             </h2>

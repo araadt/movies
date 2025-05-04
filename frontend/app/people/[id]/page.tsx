@@ -1,7 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPerson, getPersonCredits } from "@/lib/tmdb";
-import Image from "next/image";
-import { PosterOrBioPhoto, HeroTitle } from "@/components/films/FilmCard";
+import { PosterOrBioPhoto, HeroTitle, CastAndCrewTitle } from "@/components/films/FilmCard";
 import FluidColumn from "@/components/layout/column-wrapper";
 
 import type { Metadata } from 'next'
@@ -9,6 +8,9 @@ import type { Metadata } from 'next'
 import { env } from "process";
 import React from "react";
 import { TruncatedBio } from "@/components/films/TruncatedBio";
+import { Badge } from "@/components/ui/badge";
+import {  StarIcon} from "lucide-react";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -75,6 +77,221 @@ const BioDetail = ({ label, value, person }: { label: string, value: any | null,
     )
 }
 
+const RatingBadge = ({ value }: { value: number }) => {
+    let bgColor
+
+    if (value === null) {
+        return null;
+    }
+
+    if (value < 5) {
+        bgColor = "bg-transparent border border-foreground/10 hover:border-red-500";
+    } else if (value < 7) {
+        bgColor = "bg-transparent border border-foreground/10 hover:border-amber-200";
+    } else {
+        bgColor = "bg-transparent border border-foreground/10 hover:border-green-500";
+    }
+
+    return (
+        <Badge className={`${bgColor} text-foreground/80 rounded-full hover:bg-transparent flex flex-row items-center gap-1`}>
+            <StarIcon className="w-4 h-4" />
+            <p className="text-sm font-noto-sans-display font-stretch-ultra-condensed font-bold uppercase">{value.toFixed(1)}</p>
+        </Badge>
+    )
+}
+
+const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) => {
+    // Filter out 'id' and any other non-credit types
+    const creditTypes = Object.keys(credits).filter(type => type !== 'id');
+
+    const renderCreditCards = (type: string) => {
+        const creditList = credits[type]
+            .filter((credit: any) => credit.release_date && credit.release_date !== 'N/A')
+            .sort((a: any, b: any) => {
+                const dateA = a.release_date ? new Date(a.release_date).getTime() : 0;
+                const dateB = b.release_date ? new Date(b.release_date).getTime() : 0;
+                return dateB - dateA;
+            });
+
+        // For crew, group by job
+        if (type === 'crew') {
+            // Group credits by job
+            const groupedCredits = creditList.reduce((acc: { [key: string]: any[] }, credit: any) => {
+                const job = credit.job || 'Other';
+                if (!acc[job]) {
+                    acc[job] = [];
+                }
+                acc[job].push(credit);
+                return acc;
+            }, {});
+
+            // Sort jobs alphabetically
+            const sortedJobs = Object.keys(groupedCredits).sort();
+
+            return sortedJobs.map((job, jobIndex) => (
+                <React.Fragment key={`job-${jobIndex}`}>
+                    <div className="
+                        col-span-full
+                        col-start-0 lg:col-start-1
+                        col-end-1 lg:col-end-2
+                        flex lg:justify-end items-baseline"
+                    >
+                        <h2 className="font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase text-xl">
+                            {job}
+                        </h2>
+                    </div>
+                    {groupedCredits[job].map((credit: any, index: number) => {
+                        const releaseYear = credit.release_date 
+                            ? new Date(credit.release_date).toLocaleDateString('en-US', { year: 'numeric' })
+                            : 'N/A';
+
+                        const uniqueKey = `${type}-${job}-${credit.id}-${index}`;
+                        const isLastInGroup = index === groupedCredits[job].length - 1;
+                        const creditLink = credit.media_type === 'movie' ? `/film/${credit.id}` : `/tv/${credit.id}`;
+
+                        return (
+                            <React.Fragment key={uniqueKey}>
+                                <div 
+                                    data-id={`credit-${credit.id}`}
+                                    data-type={type}
+                                    className="
+                                        col-span-full
+                                        col-start-1 lg:col-start-2
+                                        -col-end-1
+                                        flex flex-row flex-wrap gap-4 sm:gap-8 items-baseline"
+                                >
+                                    <div 
+                                        className={`grid grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
+                                        data-id={`credit-${credit.id}`}
+                                        data-type={type}
+                                        data-title={credit.title}
+                                        data-job={credit.job}
+                                        data-cast-id={credit.cast_id}
+                                    >
+                                        {/* first column */}
+                                        <h3 className={`font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-right invisible`}
+                                            data-id={`credit-${credit.id}`}
+                                            data-type={type}
+                                            data-title={credit.title}
+                                            data-job={credit.job}
+                                        >
+                                            {credit.job}
+                                        </h3>
+
+                                        {/* second column */}
+                                        <div className="col-span-1">
+                                            <p className="font-sans text-2xl text-foreground font-medium uppercase col-span-1"
+                                                data-id={`credit-${credit.id}`}
+                                                data-type={type}
+                                                data-title={credit.title}
+                                                data-job={credit.job}
+                                            >
+                                                <Link className="hover:underline" href={creditLink}>{credit.title}{" "}</Link>
+                                                <span className={`font-noto-sans-display text-xl font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase`}>
+                                                    {releaseYear} {credit.media_type}
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        {/* third column */}
+                                        <div className="col-span-1">
+                                            <div className="flex flex-row items-center justify-end">    
+                                                <RatingBadge value={credit.vote_average} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {isLastInGroup && <div className="mb-10" data-id="spacer"><p>&nbsp;</p></div>}
+                            </React.Fragment>
+                        );
+                    })}
+                </React.Fragment>
+            ));
+        }
+
+        // For cast, render as before
+        return creditList.map((credit: any, index: number) => {
+            const releaseYear = credit.release_date 
+                ? new Date(credit.release_date).toLocaleDateString('en-US', { year: 'numeric' })
+                : 'N/A';
+
+            const uniqueKey = `${type}-${credit.id}-${index}`;
+            const isLastInGroup = index === creditList.length - 1;
+            const creditLink = credit.media_type === 'movie' ? `/film/${credit.id}` : `/tv/${credit.id}`;
+
+            return (
+                <React.Fragment key={uniqueKey}>
+                    <div 
+                        data-id={`credit-${credit.id}`}
+                        data-type={type}
+                        className="
+                            col-span-full
+                            col-start-1 lg:col-start-2
+                            -col-end-1
+                            flex flex-row flex-wrap gap-4 sm:gap-8 items-baseline"
+                    >
+                        <div 
+                            className={`grid grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
+                            data-id={`credit-${credit.id}`}
+                            data-type={type}
+                            data-title={credit.title}
+                            data-job={credit.job}
+                            data-cast-id={credit.cast_id}
+                        >
+                            {/* first column */}
+                            <h3 className={`font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-right`}>
+                                {credit.character}
+                            </h3>
+
+                            {/* second column */}
+                            <div className="col-span-1">
+                                <p className="font-sans text-2xl text-foreground font-medium uppercase col-span-1">
+                                    <Link className="hover:underline" href={creditLink}>{credit.title}{" "}</Link>
+                                    <span className={`font-noto-sans-display text-xl font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase`}>
+                                        {releaseYear} {credit.media_type}
+                                    </span>
+                                </p>
+                            </div>
+
+                            {/* third column */}
+                            <div className="col-span-1">
+                                <div className="flex flex-row items-center justify-end">    
+                                    <RatingBadge value={credit.vote_average} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {isLastInGroup && <div className="mb-10" data-id="spacer"><p>&nbsp;</p></div>}
+                </React.Fragment>
+            );
+        });
+    };
+
+    return (
+        <FluidColumn
+            id={`credits-${person.id}`}
+            data-person-id={person.id}
+            data-person-name={person.name}
+        >
+            {creditTypes.map(type => (
+                <React.Fragment key={type}>
+                    {type === 'cast' && (
+                        <div className="
+                            col-span-full
+                            col-start-0 lg:col-start-1
+                            col-end-1 lg:col-end-2
+                            flex lg:justify-end items-baseline"
+                        >
+                            <CastAndCrewTitle title={type.charAt(0).toUpperCase() + type.slice(1)} />
+                        </div>
+                    )}
+                    {renderCreditCards(type)}
+                </React.Fragment>
+            ))}
+        </FluidColumn>
+    );
+};
+
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const person = await getPerson(id);
@@ -103,11 +320,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     if (process.env.NODE_ENV === 'development' && person) {
-        console.info(`Fetched person:`, person);
+        console.info(`Fetched person:`);
+        console.info(person);
     }
 
     if (process.env.NODE_ENV === 'development' && credits && process.env.VERBOSE) {
-        console.info(`Fetched credits:`, credits);
+        console.info(`Fetched credits:`);
+        console.info(credits);
     }
 
     return (
@@ -163,6 +382,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                     </div>
                 </div>
             </FluidColumn>
+            <CastAndCrewCredits person={person} credits={credits} />
         </>
     )
 }
