@@ -4,12 +4,15 @@
 
 
 import { getFilmCredits, getFilmDetails, options } from "@/lib/tmdb";
-import { FilmDetails, CastMember as CastMemberType } from "@/types/movieDetails";
+import { FilmDetails } from "@/types/movieDetails";
+import { CastCredit, CrewCredit } from "@/types/peopleDetails";
 import FluidColumn from "@/components/layout/column-wrapper";
 import CrewMember from "./CrewMember";
 import CastMember from "./CastMember";
 import { Badge } from "../ui/badge";
-import { Clock, Star } from 'lucide-react';
+import { Clock, Star, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import Link from "next/link";
 
 type FilmCardProps = {
     film: string | number;
@@ -19,7 +22,7 @@ type FilmCardProps = {
 const FilmTitle = ({ title }: { title: string }) => {
     return (
         <h1
-            className="font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl md:text-8xl lg:text-9xl font-light text-foreground  me-[1.5em] p-0 m-0 mb-4 lg:ms-[-1.5em]"
+            className="font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl md:text-8xl lg:text-9xl font-light text-foreground  me-[1.5em] p-0 m-0 mb-8 lg:ms-[-1.5em]"
             data-title={title}
         >
             {title}
@@ -30,7 +33,7 @@ const FilmTitle = ({ title }: { title: string }) => {
 const FilmPoster = ({ film }: { film: string }) => {
     return (
         <article
-            className="aspect-[2/3] justify-end bg-cover bg-center relative p-0 my-8 w-full max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 rounded-md"
+            className="aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-10 w-full max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 rounded-md"
             style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/w500${film})`
             }}
@@ -171,13 +174,33 @@ const Votes = ({ data }: { data: FilmDetails }) => {
     )
 }
 
-const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
-    // Ensure filmId is a number
-    const numericFilmId = typeof filmId === 'string' ? parseInt(filmId, 10) : filmId;
-    const credits = await getFilmCredits(numericFilmId);
+const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
+    // Ensure film is a number
+    const filmId = typeof film === 'string' ? parseInt(film, 10) : film;
+    const credits = await getFilmCredits(filmId);
+
+    if (!credits) {
+        // TODO: Migrate the error display to a generic component
+        // SEE ALSO /people/[id]/page.tsx and migrate that one as well
+
+        return (
+            <div className="flex items-center justify-center w-full h-full flex-1">
+                <Card className="w-full h-full">
+                    <CardHeader>
+                        <CardTitle>
+                            <h1 className="text-3xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 uppercase">Film Not Found</h1>
+                        </CardTitle>
+                        <CardDescription>
+                            <p className="text-foreground/60">No film found with ID: {filmId}</p>
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        )
+    }
 
     try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}?language=en-US`, options);
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, options);
 
         // dump the response if we fail
         if (!response.ok) {
@@ -228,8 +251,8 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                 return (
                     <div className="flex flex-col gap-4">
                         <FluidColumn
-                            id={`film-details-${numericFilmId}`}
-                            data-film-id={numericFilmId}
+                            id={`film-details-${filmId}`}
+                            data-film-id={filmId}
                             data-film-title={filmData.title}
                             backgroundImage={`https://image.tmdb.org/t/p/w500${filmData.poster_path}`}
                         >
@@ -278,26 +301,24 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
 
                                     {/* top-level crew details */}
                                     <div className="flex flex-wrap w-full max-w-[110ch]">
-                                        <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                        {credits.crew.some(crew => crew.job === 'Director of Photography') && (
-                                            <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
-                                        )}
-                                        {credits.crew.some(crew => crew.job === 'Executive Producer') && (
-                                            <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
-                                        )}
-                                        {credits.crew.some(crew => crew.job === 'Screenplay') && (
-                                            <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
-                                        )}
-                                        {credits.crew.some(crew => crew.job === 'Writer') && (
-                                            <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
-                                        )}
-                                        {credits.crew.some(crew => crew.job === 'Editor') && (
-                                            <CrewMember crew={credits.crew} creditTitle="Editor" topLevel />
+                                        {credits?.crew && (
+                                            <>
+                                                <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
+                                                {credits.crew.some(crew => crew.job === 'Director of Photography') && (
+                                                    <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                                )}
+                                                {credits.crew.some(crew => crew.job === 'Executive Producer') && (
+                                                    <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                                )}
+                                                {credits.crew.some(crew => crew.job === 'Screenplay') && (
+                                                    <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
+                                                )}
+                                            </>
                                         )}
                                     </div>
 
                                     {/* overview */}
-                                    <div className="mt-10 mb-4">
+                                    <div className="my-12">
                                         <label
                                             htmlFor="overview"
                                             className="font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase">Overview</label>
@@ -309,8 +330,8 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
 
                         {/* TOP-LEVEL CAST DETAILS */}
                         <FluidColumn
-                            id={`cast-details-${numericFilmId}`}
-                            data-film-id={numericFilmId}
+                            id={`cast-details-${filmId}`}
+                            data-film-id={filmId}
                             data-film-title={filmData.title}
                         >
                             <div className="
@@ -329,24 +350,27 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4"
                             >
                                 {/* cast members - show first 12 cast members */}
-                                {credits.cast.slice(0, 25).map((castMember: CastMemberType) => {
-                                    console.log('Cast Member:', castMember.name, 'Character:', castMember.character);
-                                    return (
-                                        <CastMember
-                                            key={castMember.id}
-                                            cast={credits.cast}
-                                            creditTitle={castMember.character}
-                                            className="w-full"
-                                        />
-                                    );
-                                })}
+                                {credits?.cast && credits.cast.slice(0, 12).map((castMember: CastCredit) => (
+                                    <CastMember
+                                        key={castMember.id}
+                                        cast={credits.cast}
+                                        creditTitle={castMember.character}
+                                        className="w-full"
+                                    />
+                                ))}
+                                <div className=" col-start-2 md:col-start-3 lg:-col-start-2 mt-4 flex items-center gap-1 w-full col-span-full justify-start font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase">
+                                    <ArrowUpRight className="w-fit h-fit" />
+                                    <Link href={`/people/${credits.cast[0].id}`} className="flex items-center gap-2">
+                                        View full cast
+                                    </Link>
+                                </div>
                             </div>
                         </FluidColumn>
 
                         {/* TOP-LEVEL CREW DETAILS */}
                         <FluidColumn
-                            id={`crew-details-${numericFilmId}`}
-                            data-film-id={numericFilmId}
+                            id={`crew-details-${filmId}`}
+                            data-film-id={filmId}
                             data-film-title={filmData.title}
                         >
                             <div className="
@@ -364,19 +388,22 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                                 -col-end-1
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4"
                             >
-
-                                <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
-                                <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
-                                <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
-                                <CrewMember crew={credits.crew} creditTitle="Production Design" />
-                                <CrewMember crew={credits.crew} creditTitle="Art Direction" />
-                                <CrewMember crew={credits.crew} creditTitle="Producer" />
-                                <CrewMember crew={credits.crew} creditTitle="Costume Design" />
-                                <CrewMember crew={credits.crew} creditTitle="Screenplay" />
-                                <CrewMember crew={credits.crew} creditTitle="Novel" />
-                                <CrewMember crew={credits.crew} creditTitle="Assistant Editor" />
-                                <CrewMember crew={credits.crew} creditTitle="Casting" />
+                                {credits?.crew && (
+                                    <>
+                                        <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Production Design" />
+                                        <CrewMember crew={credits.crew} creditTitle="Art Direction" />
+                                        <CrewMember crew={credits.crew} creditTitle="Producer" />
+                                        <CrewMember crew={credits.crew} creditTitle="Costume Design" />
+                                        <CrewMember crew={credits.crew} creditTitle="Screenplay" />
+                                        <CrewMember crew={credits.crew} creditTitle="Novel" />
+                                        <CrewMember crew={credits.crew} creditTitle="Assistant Editor" />
+                                        <CrewMember crew={credits.crew} creditTitle="Casting" />
+                                    </>
+                                )}
                             </div>
                         </FluidColumn>
                     </div>
