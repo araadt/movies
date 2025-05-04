@@ -38,7 +38,7 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
 
     if (members.length === 0) return null;
 
-    let columns = 'flex';
+    let columns = 'flex-row sm:flex-col';
     let creditTitleSize = 'text-md';
     let nameSize = 'text-lg';
 
@@ -49,21 +49,19 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
     }
 
     return (
-        <div className={`flex ${columns} gap-2 p-0 m-0 mb-1 me-2 items-baseline justify-start ${className}`}>
-            <h3 className={`${creditTitleSize} font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase self-baseline m-0 me-2 p-0`}>
+        <div className={`flex ${columns} gap-2 p-0 m-0 items-baseline ${className}`}>
+            <h3 className={`${creditTitleSize} font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-right sm:text-left flex-1 sm:flex-initial`}>
                 {creditTitle}
             </h3>
-            <div className="flex flex-col gap-1 items-baseline">
-                {members.map((member, index) => {
-                    const isTopBilled = topBilledCastIds.includes(member.id);
-                    return (
-                        <p key={member.id} className={`${isTopBilled ? 'text-2xl' : nameSize} font-sans text-foreground font-medium uppercase self-baseline me-2 ${index < members.length - 1 ? 'mr-2' : ''}`}>
-                            {member.name}
-                            {index < members.length - 1 && ','}
-                        </p>
-                    );
-                })}
-            </div>
+            {members.map((member, index) => {
+                const isTopBilled = topBilledCastIds.includes(member.id);
+                return (
+                    <p key={member.id} className={`${isTopBilled ? 'text-2xl' : nameSize} font-sans text-foreground font-medium uppercase flex-1  ${index < members.length - 1 ? 'mr-2' : ''}`}>
+                        {member.name}
+                        {index < members.length - 1 && ','}
+                    </p>
+                );
+            })}
         </div>
     );
 };
