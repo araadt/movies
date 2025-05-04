@@ -61,7 +61,7 @@ export default function RootLayout({
       className={`${inter.variable} ${WorkSans.variable} ${NotoSans.variable} ${NotoSansDisplay.variable} ${geistSans.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="bg-background text-foreground">
+      <body className="bg-background text-foreground h-full w-full">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -73,7 +73,7 @@ export default function RootLayout({
           {/* This grid setup is a bit bonkers and needs to be centralized somewhere. */}
           {/* The goal is to create space for metadata on the sides at larger breakpoints. */}
 
-          <main className="min-h-screen flex flex-col items-center ">
+          <main className="min-h-screen h-full w-full flex flex-col items-center justify-center">
             <nav id="nav-bar" className="w-full flex items-center justify-center border-b border-b-foreground/10 min-h-48 sm:min-h-24 m-0 p-0">
               <div className="w-full text-sm md:text-base
               grid grid-cols-1 sm:grid-cols-2 grid-flow-row lg:grid-cols-6 3xl:grid-cols-12 gap-4 m-0 p-0">
@@ -97,12 +97,10 @@ export default function RootLayout({
 
             </nav>
 
-            <div className="flex-1 w-full flex flex-col gap-4 items-center">
-              <section id="content" className="flex flex-col gap-16 w-full h-full p-5">
-                {children}
-              </section>
-
+            <div className="flex-1 w-full h-full flex flex-col gap-4 items-center p-5">
+              {children}
             </div>
+
             <footer id="footer" className="w-full flex items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
               <div className="flex flex-col gap-1">
                 <p>
