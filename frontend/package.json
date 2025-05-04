@@ -24,6 +24,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
+    "@geist-ui/icons": "^1.0.2",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-aspect-ratio": "^1.1.4",
     "@radix-ui/react-checkbox": "^1.1.1",
