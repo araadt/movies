@@ -174,6 +174,19 @@ const Votes = ({ data }: { data: FilmDetails }) => {
     )
 }
 
+const ViewMoreLink = ({ href, text, className }: { href: string, text: string, className?: string }) => {
+    return (
+        <div className="col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6">
+            <div className={`col-start-1 sm:-col-start-1 md:-col-start-2 mt-4 flex items-center gap-1 font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase ${className}`}>
+                <ArrowUpRight className="w-fit h-fit" />
+                <Link href={href} className="flex items-center gap-2">
+                    {text}
+                </Link>
+            </div>
+        </div>
+    )
+}
+
 const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
     // Ensure film is a number
     const filmId = typeof film === 'string' ? parseInt(film, 10) : film;
@@ -358,12 +371,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                         className="w-full"
                                     />
                                 ))}
-                                <div className=" col-start-2 md:col-start-3 lg:-col-start-2 mt-4 flex items-center gap-1 w-full col-span-full justify-start font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase">
-                                    <ArrowUpRight className="w-fit h-fit" />
-                                    <Link href={`/people/${credits.cast[0].id}`} className="flex items-center gap-2">
-                                        View full cast
-                                    </Link>
-                                </div>
+                                <ViewMoreLink href={`#full-cast`} text="View full cast" />
                             </div>
                         </FluidColumn>
 
@@ -404,6 +412,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                         <CrewMember crew={credits.crew} creditTitle="Casting" />
                                     </>
                                 )}
+                                <ViewMoreLink href={`#full-crew`} text="View full crew" />
                             </div>
                         </FluidColumn>
                     </div>
