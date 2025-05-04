@@ -16,7 +16,7 @@ import Link from "next/link";
 
 type FilmCardProps = {
     film: string | number;
-    variant: 'poster' | 'details' | string;
+    variant: 'poster' | 'details' | 'bio';
 };
 
 export const HeroTitle = ({ title, className }: { title: string, className?: string }) => {
@@ -33,7 +33,7 @@ export const HeroTitle = ({ title, className }: { title: string, className?: str
 export const PosterOrBioPhoto = ({ film, className }: { film: string, className?: string }) => {
     return (
         <article
-            className={`aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-0 sm:my-10 w-full max-w-[600px] sm:max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 rounded-md ${className}`}
+            className={`aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-0 sm:my-10 w-full max-w-[600px] sm:max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 ${className}`}
             style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/w500${film})`
             }}
