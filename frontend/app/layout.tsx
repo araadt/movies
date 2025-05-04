@@ -97,7 +97,7 @@ export default function RootLayout({
 
             </nav>
 
-            <div className="flex-1 w-full h-full flex flex-col gap-4 items-center p-5">
+            <div className="flex-1 w-full h-full flex flex-col gap-4 items-center p-5 py-0 sm:py-5">
               {children}
             </div>
 
