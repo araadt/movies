@@ -38,20 +38,24 @@ export type FilmDetails = {
 
 
 
-// Simplified type for film cards and lists
-export type FilmSummary = Pick<FilmDetails,
-    'id' |
-    'title' |
-    'overview' |
-    'popularity' |
-    'poster_path' |
-    'release_date' |
-    'vote_average' |
-    'vote_count' |
-    'origin_country' |
-    'original_language' |
-    'genres'
->;
+// Simplified type for film cards and lists that matches TMDB API response
+export type FilmSummary = {
+    id: number;
+    title: string;
+    overview: string;
+    popularity: number;
+    poster_path: string | null;
+    release_date: string;
+    vote_average: number;
+    vote_count: number;
+    origin_country: string[];
+    original_language: string;
+    genres: FilmGenre[];
+    adult?: boolean;
+    backdrop_path?: string | null;
+    video?: boolean;
+    original_title?: string;
+};
 
 export type FilmGenre = {
     id: number;
@@ -126,4 +130,19 @@ export type ReleaseDatesResult = {
 export type ReleaseDatesResponse = {
     id: number;
     results: ReleaseDatesResult[];
+};
+
+export type CastMember = {
+    adult: boolean;
+    gender: number;
+    id: number;
+    known_for_department: string;
+    name: string;
+    original_name: string;
+    popularity: number;
+    profile_path: string | null;
+    cast_id: number;
+    character: string;
+    credit_id: string;
+    order: number;
 };

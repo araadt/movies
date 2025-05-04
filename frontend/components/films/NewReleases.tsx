@@ -2,14 +2,8 @@
 
 import { options } from '@/lib/tmdb';
 import Link from 'next/link';
-
-type Film = {
-    id: number;
-    title: string;
-    overview: string;
-    popularity: number;
-    poster_path: string;
-};
+import FilmCard from '@/components/films/FilmCard';
+import { FilmSummary } from '@/types/movieDetails';
 
 const gridColsMap = {
     1: 'grid-cols-1',
@@ -52,7 +46,7 @@ export const getFilmDetails = async (filmId: number) => {
 }
 
 const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: number, variant: string }) => {
-    let films: Film[] = [];
+    let films: FilmSummary[] = [];
     let error = null;
 
     try {
@@ -80,7 +74,7 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
         // The API default pagination return is 20 items.
         // We're just grabbing the first 5 because who
         // has time to watch 20 movies?
-        films = data.results.slice(0, displayQuantity);
+        films = data.results.slice(0, displayQuantity) as FilmSummary[];
 
         // return detailed result in development only
         if (process.env.NODE_ENV === 'development') {
@@ -121,26 +115,10 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
             const gridCols = gridColsMap[displayQuantity as keyof typeof gridColsMap] || 'grid-cols-1';
 
             return (
-                <div className={`grid ${gridCols} gap-1`}>
+                <div className={`grid ${gridCols} gap-2`}>
                     {films.sort((a, b) => b.popularity - a.popularity).map((film) => (
                         <Link href={`/films/${film.id}`} key={film.id}>
-                            <article
-                                className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
-                                style={{
-                                    backgroundImage: `url(https://image.tmdb.org/t/p/w500${film.poster_path})`
-                                }}
-                            >
-                                {/* gradient overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xs group-hover:opacity-100 opacity-20 transition-opacity duration-300" />
-
-                                <div className="flex items-baseline justify-between gap-2">
-                                    {/* title */}
-                                    <h3 className="text-2xl font-medium text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{film.title}</h3>
-
-                                    {/* flag icon -- where it was made */}
-                                    <p className="text-sm text-white relative z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={getFilmDetails(film.id)} data-alt="country of origin">{getFilmDetails(film.id)}</p>
-                                </div>
-                            </article>
+                            <FilmCard film={film.id} variant="poster" />
                         </Link>
                     ))}
                 </div>
