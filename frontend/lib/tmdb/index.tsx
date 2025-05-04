@@ -4,7 +4,8 @@
 // - TMDB_API_KEY
 
 import { MovieCredits } from "@/types/movieCredits";
-import { CastCredit, CrewCredit } from "@/types/peopleDetails";
+import { Person, PersonCredits } from "@/types/peopleDetails";
+import { FilmDetails } from "@/types/movieDetails";
 
 // TMDB BASIC GET REQUEST OPTIONS
 export const options = {
@@ -15,52 +16,108 @@ export const options = {
     }
 };
 
-export const getFilmDetails = async (filmId: number) => {
-    // quickly get all details for now until I create the flag-component
-
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, options);
-    const data = await response.json();
-
-    // dump the response if we fail
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error('API Error:', {
-            status: response.status,
-            statusText: response.statusText,
-            statusMessage: errorData?.status_message,
-            error: errorData
+export const getFilmDetails = async (filmId: number): Promise<FilmDetails | null> => {
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, {
+            ...options,
+            cache: 'no-store',
+            next: { revalidate: 0 }
         });
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
+        const data = await response.json();
 
-    return data;
+        if (!response.ok) {
+            console.warn('Film not found:', {
+                id: filmId,
+                status: response.status,
+                statusText: response.statusText
+            });
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching film details:', error);
+        return null;
+    }
 }
 
-export const getFilmCredits = async (filmId: string | number): Promise<MovieCredits> => {
+export const getFilmCredits = async (filmId: string | number): Promise<MovieCredits | null> => {
     const numericFilmId = typeof filmId === 'string' ? parseInt(filmId, 10) : filmId;
 
-    const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}/credits?language=en-US`, options);
-    const data = await response.json();
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}/credits?language=en-US`, {
+            ...options,
+            cache: 'no-store',
+            next: { revalidate: 0 }
+        });
+        const data = await response.json();
 
-    return data;
+        if (!response.ok) {
+            console.warn('Film credits not found:', {
+                id: numericFilmId,
+                status: response.status,
+                statusText: response.statusText
+            });
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching film credits:', error);
+        return null;
+    }
 }
 
-export const getCastCredits = async (castId: string | number): Promise<CastCredit> => {
-    const numericCastId = typeof castId === 'string' ? parseInt(castId, 10) : castId;
+export const getPerson = async (personId: string | number): Promise<Person | null> => {
+    const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
 
-    const response = await fetch(`https://api.themoviedb.org/3/person/${numericCastId}?language=en-US`, options);
-    const data = await response.json();
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}?language=en-US`, {
+            ...options,
+            cache: 'no-store',
+            next: { revalidate: 0 }
+        });
+        const data = await response.json();
 
-    console.log(data);
+        if (!response.ok) {
+            console.warn('Person not found:', {
+                id: numericPersonId,
+                status: response.status,
+                statusText: response.statusText
+            });
+            return null;
+        }
 
-    return data;
+        return data;
+    } catch (error) {
+        console.error('Error fetching person:', error);
+        return null;
+    }
 }
 
-export const getCrewCredits = async (crewId: string | number): Promise<CrewCredit> => {
-    const numericCrewId = typeof crewId === 'string' ? parseInt(crewId, 10) : crewId;
+export const getPersonCredits = async (personId: string | number): Promise<PersonCredits | null> => {
+    const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
 
-    const response = await fetch(`https://api.themoviedb.org/3/person/${numericCrewId}/credits?language=en-US`, options);
-    const data = await response.json();
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}/combined_credits?language=en-US`, {
+            ...options,
+            cache: 'no-store',
+            next: { revalidate: 0 }
+        });
+        const data = await response.json();
 
-    return data;
+        if (!response.ok) {
+            console.warn('Person credits not found:', {
+                id: numericPersonId,
+                status: response.status,
+                statusText: response.statusText
+            });
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching person credits:', error);
+        return null;
+    }
 }
