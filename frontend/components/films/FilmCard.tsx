@@ -19,10 +19,10 @@ type FilmCardProps = {
     variant: 'poster' | 'details' | string;
 };
 
-const FilmTitle = ({ title }: { title: string }) => {
+export const HeroTitle = ({ title, className }: { title: string, className?: string }) => {
     return (
         <h1
-            className="font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl md:text-8xl lg:text-9xl font-light text-foreground  me-[1.5em] p-0 m-0 mb-8 lg:ms-[-1.5em]"
+            className={`font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl md:text-8xl lg:text-9xl font-light text-foreground me-[1.5em] p-0 m-0 mb-8 lg:ms-[-1.5em] ${className}`}
             data-title={title}
         >
             {title}
@@ -30,10 +30,10 @@ const FilmTitle = ({ title }: { title: string }) => {
     )
 }
 
-const FilmPoster = ({ film }: { film: string }) => {
+export const PosterOrBioPhoto = ({ film, className }: { film: string, className?: string }) => {
     return (
         <article
-            className="aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-10 w-full max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 rounded-md"
+            className={`aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-0 sm:my-10 w-full max-w-[600px] sm:max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10 rounded-md ${className}`}
             style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/w500${film})`
             }}
@@ -284,9 +284,9 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
 
                                 {/* Content section */}
                                 <div className="relative z-10 flex flex-col">
-                                    {filmData.poster_path && <FilmPoster film={filmData.poster_path} />}
+                                    {filmData.poster_path && <PosterOrBioPhoto film={filmData.poster_path} className="m-0 p-0 mt-0 sm:mt-[10svh]" />}
 
-                                    <FilmTitle title={filmData.title} />
+                                    <HeroTitle title={filmData.title} />
 
                                     {/* <p data-id="tagline" data-title={filmData.tagline}>Tagline: {filmData.tagline}</p> */}
 
