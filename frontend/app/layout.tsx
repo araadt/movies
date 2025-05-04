@@ -61,7 +61,7 @@ export default function RootLayout({
       className={`${inter.variable} ${WorkSans.variable} ${NotoSans.variable} ${NotoSansDisplay.variable} ${geistSans.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="bg-background text-foreground h-full w-full">
+      <body className="bg-background text-foreground h-full w-full whitespace-pre-wrap">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
