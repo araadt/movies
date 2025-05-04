@@ -1,11 +1,7 @@
-import { CrewMember as CrewMemberType } from "@/types/movieCredits";
+import { CrewCredit } from "@/types/peopleDetails";
 
 type CrewMemberProps = {
-    crew: Array<{
-        id: number;
-        name: string;
-        job: string;
-    }>;
+    crew: CrewCredit[];
     creditTitle: string;
     className?: string;
     topLevel?: boolean;

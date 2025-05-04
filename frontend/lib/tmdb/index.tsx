@@ -3,8 +3,8 @@
 // ENV REQUIREMENTS:
 // - TMDB_API_KEY
 
-import { FilmDetails } from "@/types/movieDetails";
 import { MovieCredits } from "@/types/movieCredits";
+import { CastCredit, CrewCredit } from "@/types/peopleDetails";
 
 // TMDB BASIC GET REQUEST OPTIONS
 export const options = {
@@ -40,6 +40,26 @@ export const getFilmCredits = async (filmId: string | number): Promise<MovieCred
     const numericFilmId = typeof filmId === 'string' ? parseInt(filmId, 10) : filmId;
 
     const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}/credits?language=en-US`, options);
+    const data = await response.json();
+
+    return data;
+}
+
+export const getCastCredits = async (castId: string | number): Promise<CastCredit> => {
+    const numericCastId = typeof castId === 'string' ? parseInt(castId, 10) : castId;
+
+    const response = await fetch(`https://api.themoviedb.org/3/person/${numericCastId}?language=en-US`, options);
+    const data = await response.json();
+
+    console.log(data);
+
+    return data;
+}
+
+export const getCrewCredits = async (crewId: string | number): Promise<CrewCredit> => {
+    const numericCrewId = typeof crewId === 'string' ? parseInt(crewId, 10) : crewId;
+
+    const response = await fetch(`https://api.themoviedb.org/3/person/${numericCrewId}/credits?language=en-US`, options);
     const data = await response.json();
 
     return data;

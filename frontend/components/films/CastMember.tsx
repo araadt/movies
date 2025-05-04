@@ -1,7 +1,12 @@
-import { CastMember as CastMemberType } from "@/types/movieDetails";
+'use client';
+
+import { CastCredit } from "@/types/peopleDetails";
+
+// Module-level variable to track if we've logged
+let hasLogged = false;
 
 type CastMemberProps = {
-    cast: CastMemberType[];
+    cast: CastCredit[];
     creditTitle: string;
     className?: string;
     topLevel?: boolean;
@@ -12,12 +17,24 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
     // This is kind of an opinionated choice to limit four, but that's on the basis of the number of columns in the grid and nothing more
     const topBilledCastIds = cast.slice(0, 4).map(member => member.id);
 
+    if (!hasLogged && cast.length > 0) {
+        console.log('=== Top 4 Billed Cast Members ===');
+        console.log('Total cast members:', cast.length);
+
+        // Get the first 4 cast members by order
+        const topBilledCast = cast.slice(0, 4);
+        console.log('Top billed cast members:');
+        topBilledCast.forEach(member => {
+            console.log(`- ${member.name} as ${member.character} (ID: ${member.id})`);
+        });
+        console.log('===============================');
+        hasLogged = true;
+    }
+
     // Filter cast members by character and limit to 3
     const members = cast
         .filter(member => member.character.toLowerCase() === creditTitle.toLowerCase())
         .slice(0, 3);
-
-    console.log('Members:', members);
 
     if (members.length === 0) return null;
 
