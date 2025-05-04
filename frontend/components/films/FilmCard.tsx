@@ -279,11 +279,21 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                                     {/* top-level crew details */}
                                     <div className="flex flex-wrap w-full max-w-[110ch]">
                                         <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Producer" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Editor" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Production Design" topLevel />
+                                        {credits.crew.some(crew => crew.job === 'Director of Photography') && (
+                                            <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                        )}
+                                        {credits.crew.some(crew => crew.job === 'Executive Producer') && (
+                                            <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                        )}
+                                        {credits.crew.some(crew => crew.job === 'Screenplay') && (
+                                            <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
+                                        )}
+                                        {credits.crew.some(crew => crew.job === 'Writer') && (
+                                            <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
+                                        )}
+                                        {credits.crew.some(crew => crew.job === 'Editor') && (
+                                            <CrewMember crew={credits.crew} creditTitle="Editor" topLevel />
+                                        )}
                                     </div>
 
                                     {/* overview */}
@@ -354,11 +364,19 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                                 -col-end-1
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4"
                             >
-                                <CrewMember crew={credits.crew} creditTitle="Director of Photography" />
-                                <CrewMember crew={credits.crew} creditTitle="Screenplay" />
-                                <CrewMember crew={credits.crew} creditTitle="Producer" />
-                                <CrewMember crew={credits.crew} creditTitle="Editor" />
+
+                                <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
+                                <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
                                 <CrewMember crew={credits.crew} creditTitle="Production Design" />
+                                <CrewMember crew={credits.crew} creditTitle="Art Direction" />
+                                <CrewMember crew={credits.crew} creditTitle="Producer" />
+                                <CrewMember crew={credits.crew} creditTitle="Costume Design" />
+                                <CrewMember crew={credits.crew} creditTitle="Screenplay" />
+                                <CrewMember crew={credits.crew} creditTitle="Novel" />
+                                <CrewMember crew={credits.crew} creditTitle="Assistant Editor" />
+                                <CrewMember crew={credits.crew} creditTitle="Casting" />
                             </div>
                         </FluidColumn>
                     </div>

@@ -14,8 +14,10 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
 
     // Filter cast members by character and limit to 3
     const members = cast
-        .filter(member => member.character.toLowerCase().includes(creditTitle.toLowerCase()))
+        .filter(member => member.character.toLowerCase() === creditTitle.toLowerCase())
         .slice(0, 3);
+
+    console.log('Members:', members);
 
     if (members.length === 0) return null;
 
