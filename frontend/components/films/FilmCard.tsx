@@ -176,8 +176,8 @@ const Votes = ({ data }: { data: FilmDetails }) => {
 
 const ViewMoreLink = ({ href, text, className }: { href: string, text: string, className?: string }) => {
     return (
-        <div className="col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6">
-            <div className={`col-start-1 sm:-col-start-1 md:-col-start-2 mt-4 flex items-center gap-1 font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase ${className}`}>
+        <div className="col-span-full gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6">
+            <div className="col-start-1 sm:-col-start-1 md:-col-start-2 mt-4 flex items-center gap-1 font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase">
                 <ArrowUpRight className="w-fit h-fit" />
                 <Link href={href} className="flex items-center gap-2">
                     {text}
@@ -360,7 +360,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                 col-span-full
                                 col-start-1 lg:col-start-2
                                 -col-end-1
-                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4"
+                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
                             >
                                 {/* cast members - show first 12 cast members */}
                                 {credits?.cast && credits.cast.slice(0, 12).map((castMember: CastCredit) => (
@@ -368,7 +368,6 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                         key={castMember.id}
                                         cast={credits.cast}
                                         creditTitle={castMember.character}
-                                        className="w-full"
                                     />
                                 ))}
                                 <ViewMoreLink href={`#full-cast`} text="View full cast" />
@@ -394,7 +393,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                 col-span-full
                                 col-start-1 lg:col-start-2
                                 -col-end-1
-                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4"
+                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
                             >
                                 {credits?.crew && (
                                     <>
