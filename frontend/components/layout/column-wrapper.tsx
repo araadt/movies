@@ -10,7 +10,7 @@ const FluidColumn = ({ children, id: name, backgroundImage, className }: FluidCo
         <article
             className={`w-full text-sm md:text-base
                 grid grid-cols-1 sm:grid-cols-2 grid-auto-rows grid-flow-row lg:grid-cols-6 3xl:grid-cols-12
-                gap-4 m-0 mb-16 p-0
+                gap-4 m-0 mb-16 p-4
                 relative ${className || ''}`}
             id={`${name}`}
             style={backgroundImage ? {
