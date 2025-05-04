@@ -247,7 +247,7 @@ const FilmCard = async ({ film: filmId, variant }: FilmCardProps) => {
                             >
 
                                 {/* Content section */}
-                                <div className="relative z-10 flex flex-col p-4">
+                                <div className="relative z-10 flex flex-col">
                                     {filmData.poster_path && <FilmPoster film={filmData.poster_path} />}
 
                                     <FilmTitle title={filmData.title} />
