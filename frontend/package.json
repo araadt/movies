@@ -21,7 +21,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "test": "pnpm exec playwright test",
+    "test:report": "pnpm exec playwright show-report",
+    "test:ui": "pnpm exec playwright test --ui",
+    "test:chrome": "pnpm exec playwright test --project=chromium",
+    "test:firefox": "pnpm exec playwright test --project=firefox",
+    "test:webkit": "pnpm exec playwright test --project=webkit",
+    "test:debug": "pnpm exec playwright test --debug",
+    "test:codegen": "pnpm exec playwright codegen"
   },
   "dependencies": {
     "@geist-ui/icons": "^1.0.2",
@@ -51,6 +59,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@types/node": "22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "19.0.2",
