@@ -32,7 +32,7 @@ type FilmCardProps = {
 export const HeroTitle = ({ title, className }: { title: string, className?: string }) => {
     return (
         <h1
-            className={`font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl md:text-8xl lg:text-9xl font-light text-foreground me-[1.5em] p-0 m-0 mb-8 lg:ms-[-1.5em] ${className}`}
+            className={`font-noto-sans-display font-stretch-ultra-condensed uppercase text-6xl leading-[3.625rem] md:text-8xl lg:text-9xl font-light text-foreground me-[1.5em] p-0 m-0 mb-8 lg:ms-[-1.5em] text-balance ${className}`}
             data-title={title}
         >
             {title}
@@ -43,7 +43,7 @@ export const HeroTitle = ({ title, className }: { title: string, className?: str
 export const PosterOrBioPhoto = ({ film, className }: { film: string, className?: string }) => {
     return (
         <article
-            className={`aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-0 sm:mb-10 w-full max-w-[600px] sm:max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10  ${className}`}
+            className={`aspect-[2/3] justify-end bg-cover bg-center relative p-0 m-0 my-0 mb-4 sm:mb-8 sm:mt-8 w-full max-w-[600px] sm:max-w-[300px] min-w-[100px] shadow-sm border border-foreground/10  ${className}`}
             style={{
                 backgroundImage: `url(https://image.tmdb.org/t/p/w500${film})`
             }}
