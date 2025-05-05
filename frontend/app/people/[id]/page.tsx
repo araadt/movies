@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     }
 }
 
-const BioDetail = ({ label, value, person }: { label: string, value: any | null, person?: any }) => {
+const BioDetail = ({ label, value, person, className }: { label: string, value: any | null, person?: any, className?: string }) => {
     if (!value) {
         return null;
     }
@@ -71,8 +71,8 @@ const BioDetail = ({ label, value, person }: { label: string, value: any | null,
     }
 
     return (
-        <p className="font-noto-sans-display font-stretch-condensed uppercase font-medium text-foreground/80 text-base">
-            {label}{value ? " " : ""}<span className="text-xl">{value}</span>
+        <p className={`font-noto-sans-display font-stretch-condensed uppercase font-medium text-foreground/80 text-base ${className}`}>
+            {label}{value ? " " : ""}<span className="text-xl px-2 me-2">{value}</span>
         </p >
     )
 }
@@ -231,7 +231,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                             flex flex-row flex-wrap gap-4 sm:gap-8 items-baseline"
                     >
                         <div 
-                            className={`grid grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
+                            className={`grid grid-cols-[3fr_8fr_1fr] sm:grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
                             data-id={`credit-${credit.id}`}
                             data-type={type}
                             data-title={credit.title}
@@ -239,7 +239,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                             data-cast-id={credit.cast_id}
                         >
                             {/* first column */}
-                            <h3 className={`font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-right`}>
+                            <h3 className={`font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-lg text-right`}>
                                 {credit.character}
                             </h3>
 
@@ -247,8 +247,8 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                             <div className="col-span-1">
                                 <p className="font-sans text-2xl text-foreground font-medium uppercase col-span-1">
                                     <Link className="hover:underline" href={creditLink}>{credit.title}{" "}</Link>
-                                    <span className={`font-noto-sans-display text-xl font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase`}>
-                                        {releaseYear} {credit.media_type}
+                                    <span className={`font-noto-sans-display text-base font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase`}>
+                                        {releaseYear} {credit.media_type === 'movie' ? '' : 'TV'}
                                     </span>
                                 </p>
                             </div>
@@ -361,14 +361,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
                         {/* film metadata */}
                         <div className="flex flex-col my-2">
+                                <BioDetail label="Known for" value={person.known_for_department} />
                             <div id="person-details" className="flex flex-col sm:flex-row flex-wrap gap-2">
                                 <BioDetail label="Adult" value={person.adult} />
-                                <BioDetail label="Known for" value={person.known_for_department} />
                                 <BioDetail label="Born" value={person.birthday} person={person} />
                                 <BioDetail label="Died" value={person.deathday} />
                                 <BioDetail label="Gender" value={person.gender} />
                             </div>
-                            <BioDetail label="Also Known As" value={person.also_known_as} />
+                            <BioDetail label="Also Known As" value={person.also_known_as} className="text-muted-foreground text-sm" />
                         </div>
 
                         {/* bio overview */}
