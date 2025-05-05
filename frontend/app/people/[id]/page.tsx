@@ -9,7 +9,7 @@ import { env } from "process";
 import React from "react";
 import { TruncatedBio } from "@/components/films/TruncatedBio";
 import { Badge } from "@/components/ui/badge";
-import {  StarIcon} from "lucide-react";
+import { StarIcon } from "lucide-react";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -70,9 +70,13 @@ const BioDetail = ({ label, value, person, className }: { label: string, value: 
         }
     }
 
+    if (label === "Also Known As") {
+        value = value.join(", ").replace(/,/g, ", ");
+    }
+
     return (
-        <p className={`font-noto-sans-display font-stretch-condensed uppercase font-medium text-foreground/80 text-base ${className}`}>
-            {label}{value ? " " : ""}<span className="text-xl px-2 me-2">{value}</span>
+        <p className={`font-noto-sans-display font-stretch-condensed uppercase font-medium text-foreground/80 text-base pe-2 ${className}`}>
+            {label}{value ? " " : ""}<span className="text-xl px-2 me-2 text-pretty whitespace-pre-wrap">{value}</span>
         </p >
     )
 }
@@ -141,7 +145,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                         </h2>
                     </div>
                     {groupedCredits[job].map((credit: any, index: number) => {
-                        const releaseYear = credit.release_date 
+                        const releaseYear = credit.release_date
                             ? new Date(credit.release_date).toLocaleDateString('en-US', { year: 'numeric' })
                             : 'N/A';
 
@@ -151,7 +155,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
 
                         return (
                             <React.Fragment key={uniqueKey}>
-                                <div 
+                                <div
                                     data-id={`credit-${credit.id}`}
                                     data-type={type}
                                     className="
@@ -160,7 +164,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                                         -col-end-1
                                         flex flex-row flex-wrap gap-4 sm:gap-8 items-baseline"
                                 >
-                                    <div 
+                                    <div
                                         className={`grid grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
                                         data-id={`credit-${credit.id}`}
                                         data-type={type}
@@ -195,7 +199,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
 
                                         {/* third column */}
                                         <div className="col-span-1">
-                                            <div className="flex flex-row items-center justify-end">    
+                                            <div className="flex flex-row items-center justify-end">
                                                 <RatingBadge value={credit.vote_average} />
                                             </div>
                                         </div>
@@ -211,7 +215,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
 
         // For cast, render as before
         return creditList.map((credit: any, index: number) => {
-            const releaseYear = credit.release_date 
+            const releaseYear = credit.release_date
                 ? new Date(credit.release_date).toLocaleDateString('en-US', { year: 'numeric' })
                 : 'N/A';
 
@@ -221,7 +225,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
 
             return (
                 <React.Fragment key={uniqueKey}>
-                    <div 
+                    <div
                         data-id={`credit-${credit.id}`}
                         data-type={type}
                         className="
@@ -230,7 +234,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
                             -col-end-1
                             flex flex-row flex-wrap gap-4 sm:gap-8 items-baseline"
                     >
-                        <div 
+                        <div
                             className={`grid grid-cols-[3fr_8fr_1fr] sm:grid-cols-[3fr_12fr_1fr] w-full gap-4 p-0 m-0 items-baseline`}
                             data-id={`credit-${credit.id}`}
                             data-type={type}
@@ -255,7 +259,7 @@ const CastAndCrewCredits = ({ person, credits }: { person: any, credits: any }) 
 
                             {/* third column */}
                             <div className="col-span-1">
-                                <div className="flex flex-row items-center justify-end">    
+                                <div className="flex flex-row items-center justify-end">
                                     <RatingBadge value={credit.vote_average} />
                                 </div>
                             </div>
@@ -336,12 +340,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 data-person-id={id}
                 data-person-name={person.name}>
 
-                {/* bio poster */}
-                <div className="m-0 p-0 mt-0 sm:mt-[10svh]">
-                    {person.profile_path && <PosterOrBioPhoto film={person.profile_path} className="m-0 p-0 mt-5 mb-10" />}
-                </div>
-
-
                 {/* content area */}
                 <div className="
                 col-span-full
@@ -356,12 +354,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
                     {/* Content section */}
                     <div className="relative z-10 flex flex-col">
+                        <HeroTitle title={person.name} className="mb-0 ms-0" />
 
-                        <HeroTitle title={person.name} className="mb-0 ms-0 lg:ms-0" />
+                        {/* bio poster */}
+                        <div className="max-w-[300px] lg:relative lg:right-[16.25svw] lg:mb-[-20svw] lg:max-w-[15svw]">
+                            {person.profile_path && <PosterOrBioPhoto film={person.profile_path} />}
+                        </div>
 
                         {/* film metadata */}
                         <div className="flex flex-col my-2">
-                                <BioDetail label="Known for" value={person.known_for_department} />
+                            <BioDetail label="Known for" value={person.known_for_department} />
                             <div id="person-details" className="flex flex-col sm:flex-row flex-wrap gap-2">
                                 <BioDetail label="Adult" value={person.adult} />
                                 <BioDetail label="Born" value={person.birthday} person={person} />
