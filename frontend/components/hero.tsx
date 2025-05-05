@@ -1,6 +1,6 @@
 // TODO: Refactor to use the Figma Hero/Header wireframes
 
-import SearchBar from "./SearchBar";
+import SearchBar from "@/components/search/SearchBar";
 
 export default function Hero() {
   return (
@@ -9,7 +9,7 @@ export default function Hero() {
       <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center text-pretty">
         Browse, search, and discover. Movies and TV for everyone.
       </p>
-      
+
       <SearchBar />
     </div>
   );

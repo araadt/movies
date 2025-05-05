@@ -1,11 +1,11 @@
 'use client';
+
 import Hero from "@/components/hero";
 import NewReleases from "@/components/films/NewReleases";
 import Image from "next/image";
 
 const DEFAULT_BLUR_URL = process.env.NEXT_PUBLIC_DEFAULT_BLUR_URL || '';
 
-// TODO: Add a search bar
 // TODO: Add user profile section to protected route
 
 export default function Home() {

@@ -58,18 +58,10 @@ export const getNowPlayingMovies = async (page: number = 1) => {
 };
 
 export const getFilmDetails = async (filmId: number): Promise<FilmDetails | null> => {
-// ENV REQUIREMENTS:
-// - TMDB_API_KEY
-
-    if (!process.env.TMDB_API_KEY) {
-        throw new Error('TMDB_API_KEY is not set');
-    }
-
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, {
             ...options,
-            cache: 'no-store',
-            next: { revalidate: 0 }
+            next: { revalidate: 300 }
         });
         const data = await response.json();
 
@@ -91,16 +83,10 @@ export const getFilmDetails = async (filmId: number): Promise<FilmDetails | null
 
 export const getFilmCredits = async (filmId: string | number): Promise<MovieCredits | null> => {
     const numericFilmId = typeof filmId === 'string' ? parseInt(filmId, 10) : filmId;
-
-    if (!process.env.TMDB_API_KEY) {
-        throw new Error('TMDB_API_KEY is not set');
-    }
-
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}/credits?language=en-US`, {
             ...options,
-            cache: 'no-store',
-            next: { revalidate: 0 }
+            next: { revalidate: 300 }
         });
         const data = await response.json();
 
@@ -122,16 +108,10 @@ export const getFilmCredits = async (filmId: string | number): Promise<MovieCred
 
 export const getTVDetails = async (tvId: string | number): Promise<TVDetails | null> => {
     const numericTvId = typeof tvId === 'string' ? parseInt(tvId, 10) : tvId;
-
-    if (!process.env.TMDB_API_KEY) {
-        throw new Error('TMDB_API_KEY is not set');
-    }
-
     try {
         const response = await fetch(`https://api.themoviedb.org/3/tv/${numericTvId}?language=en-US`, {
             ...options,
-            cache: 'no-store',
-            next: { revalidate: 0 }
+            next: { revalidate: 300 }
         });
         const data = await response.json();
 
@@ -167,16 +147,10 @@ export async function getTVCredits(tvId: number): Promise<TVCredits | null> {
 
 export const getPerson = async (personId: string | number): Promise<Person | null> => {
     const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
-
-    if (!process.env.TMDB_API_KEY) {
-        throw new Error('TMDB_API_KEY is not set');
-    }
-
     try {
         const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}?language=en-US`, {
             ...options,
-            cache: 'no-store',
-            next: { revalidate: 0 }
+            next: { revalidate: 300 }
         });
         const data = await response.json();
 
@@ -198,16 +172,10 @@ export const getPerson = async (personId: string | number): Promise<Person | nul
 
 export const getPersonCredits = async (personId: string | number): Promise<PersonCredits | null> => {
     const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
-
-    if (!process.env.TMDB_API_KEY) {
-        throw new Error('TMDB_API_KEY is not set');
-    }
-
     try {
         const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}/combined_credits?language=en-US`, {
             ...options,
-            cache: 'no-store',
-            next: { revalidate: 0 }
+            next: { revalidate: 300 }
         });
         const data = await response.json();
 
@@ -224,5 +192,146 @@ export const getPersonCredits = async (personId: string | number): Promise<Perso
     } catch (error) {
         console.error('Error fetching person credits:', error);
         return null;
+    }
+}
+
+export const searchMovies = async (query: string, page: number = 1) => {
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=en-US&page=${page}`, {
+            ...options,
+            next: { revalidate: 300 }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('API Error:', {
+                status: response.status,
+                statusText: response.statusText,
+                statusMessage: errorData?.status_message,
+                error: errorData
+            });
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results) {
+            throw new Error('Invalid API response format');
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.info(`Fetched ${data.results.length} movie results for query "${query}" on page ${page}`);
+        }
+
+        return {
+            data,
+            error: null
+        };
+    } catch (error) {
+        console.error('Error searching movies:', error);
+        return {
+            data: null,
+            error: error instanceof Error ? error.message : 'An unknown error occurred'
+        };
+    }
+}
+
+export const searchTV = async (query: string, page: number = 1) => {
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(query)}&language=en-US&page=${page}`, {
+            ...options,
+            next: { revalidate: 300 }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('API Error:', {
+                status: response.status,
+                statusText: response.statusText,
+                statusMessage: errorData?.status_message,
+                error: errorData
+            });
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results) {
+            throw new Error('Invalid API response format');
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.info(`Fetched ${data.results.length} TV results for query "${query}" on page ${page}`);
+        }
+
+        return {
+            data,
+            error: null
+        };
+    } catch (error) {
+        console.error('Error searching TV:', error);
+        return {
+            data: null,
+            error: error instanceof Error ? error.message : 'An unknown error occurred'
+        };
+    }
+}
+
+export const fetchSearchResults = async (
+    query: string,
+    page: number = 1,
+    mediaType: 'movie' | 'tv' = 'movie'
+) => {
+    try {
+        // Validate page number
+        if (page < 1) {
+            page = 1;
+        }
+
+        // Validate media type
+        if (mediaType !== 'movie' && mediaType !== 'tv') {
+            throw new Error('Invalid media type. Must be either "movie" or "tv"');
+        }
+
+        // Fetch results based on media type
+        const response = await fetch(
+            `https://api.themoviedb.org/3/search/${mediaType}?query=${encodeURIComponent(query)}&language=en-US&page=${page}`,
+            {
+                ...options,
+                next: { revalidate: 300 }
+            }
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('API Error:', {
+                status: response.status,
+                statusText: response.statusText,
+                statusMessage: errorData?.status_message,
+                error: errorData
+            });
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results) {
+            throw new Error('Invalid API response format');
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.info(`Fetched ${data.results.length} ${mediaType} results for query "${query}" on page ${page}`);
+        }
+
+        return {
+            data,
+            error: null
+        };
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        return {
+            data: null,
+            error: error instanceof Error ? error.message : 'An unknown error occurred'
+        };
     }
 }

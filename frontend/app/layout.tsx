@@ -4,7 +4,7 @@ import { ThemeProvider } from "next-themes";
 
 import Link from "next/link";
 import Image from "next/image";
-
+import SearchBar from "@/components/search/SearchBar";
 import HeaderAuth from "@/components/header-auth";
 import "./globals.css";
 
@@ -75,19 +75,20 @@ export default function RootLayout({
 
           <main className="min-h-screen h-full w-full flex flex-col items-center justify-center">
             <nav id="nav-bar" className="w-full flex items-center justify-between text-sm md:text-base border-b border-b-foreground/10 min-h-16 sm:min-h-24 m-0 p-0 px-5">
-                <div className="flex justify-center sm:justify-start items-center gap-4
+              <div className="flex justify-center sm:justify-start items-center gap-4
                     col-span-full sm:col-span-1 lg:col-span-2 col-start-1 lg:col-start-2
                     m-0 p-0">
-                  <Link className="text-lg" href={"/"}>Andy's Films</Link>
-                </div>
+                <Link className="text-lg" href={"/"}>Andy's Films</Link>
+              </div>
 
-                <div className="
+              <div className="
                     flex justify-center sm:justify-end items-center gap-4 
                     col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
                     p-0 ">
-                  <HeaderAuth />
-                  <ThemeSwitcher />
-                </div>
+                <SearchBar variant="header" />
+                <HeaderAuth />
+                <ThemeSwitcher />
+              </div>
 
             </nav>
 
