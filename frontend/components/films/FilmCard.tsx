@@ -2,21 +2,23 @@
 // See the documentation for more information in-memory request caching:
 // ! DOCS: https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#server-components
 
-
-import { getFilmCredits, getFilmDetails, options } from "@/lib/tmdb";
+import { getFilmCredits, getFilmDetails, getTVDetails, getTVCredits, options } from "@/lib/tmdb";
 import { FilmDetails } from "@/types/movieDetails";
+import { TVDetails } from "@/types/tvDetails";
 import { CastCredit, CrewCredit } from "@/types/peopleDetails";
 import FluidColumn from "@/components/layout/column-wrapper";
 import CrewMember from "./CrewMember";
-import CastMember from "./CastMember";
+import { CastMember } from "./CastMember";
 import { Badge } from "../ui/badge";
 import { Clock, Star, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import Link from "next/link";
+import React from "react";
 
 type FilmCardProps = {
     film: string | number;
     variant: 'poster' | 'details' | string;
+    mediaType: 'movie' | 'tv';
 };
 
 export const HeroTitle = ({ title, className }: { title: string, className?: string }) => {
@@ -43,9 +45,9 @@ export const PosterOrBioPhoto = ({ film, className }: { film: string, className?
 
 export const CastAndCrewTitle = ({ title, className }: { title: string, className?: string }) => {
     return (
-        <div className={`flex gap-[.5em] items-baseline me-[1.125em] ${className}`}>
+        <div className={`flex gap-[.5em] relative bottom-[0.25em] self-baseline items-baseline me-[1rem] ${className}`}>
             <h2
-                className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase self-baseline ${className}`}
+                className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold m-0 p-0 self-baseline uppercase ${className}`}
                 data-id={`credit-title-${title}`}
                 data-type={title}
             >
@@ -189,12 +191,21 @@ const ViewMoreLink = ({ href, text, className }: { href: string, text: string, c
     )
 }
 
-const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
+const FilmCard = async ({ film: film, variant, mediaType }: FilmCardProps) => {
     // Ensure film is a number
     const filmId = typeof film === 'string' ? parseInt(film, 10) : film;
-    const credits = await getFilmCredits(filmId);
+    let filmData: FilmDetails | TVDetails | null = null;
+    let credits: any = null;
 
-    if (!credits) {
+    if (mediaType === 'movie') {
+        filmData = await getFilmDetails(filmId);
+        credits = await getFilmCredits(filmId);
+    } else {
+        filmData = await getTVDetails(filmId);
+        credits = await getTVCredits(filmId);
+    }
+
+    if (!filmData || !credits) {
         // TODO: Migrate the error display to a generic component
         // SEE ALSO /people/[id]/page.tsx and migrate that one as well
 
@@ -203,10 +214,10 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                 <Card className="w-full h-full">
                     <CardHeader>
                         <CardTitle>
-                            <h1 className="text-3xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 uppercase">Film Not Found</h1>
+                            <h1 className="text-3xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 uppercase">{mediaType === 'movie' ? 'Film' : 'TV Show'} Not Found</h1>
                         </CardTitle>
                         <CardDescription>
-                            <p className="text-foreground/60">No film found with ID: {filmId}</p>
+                            <p className="text-foreground/60">No {mediaType === 'movie' ? 'film' : 'TV show'} found with ID: {filmId}</p>
                         </CardDescription>
                     </CardHeader>
                 </Card>
@@ -214,8 +225,34 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
         )
     }
 
+    // Transform TV data to match film data structure if needed
+    const media = mediaType === 'tv' ? {
+        ...filmData,
+        title: (filmData as TVDetails).name,
+        release_date: (filmData as TVDetails).first_air_date,
+        runtime: (filmData as TVDetails).episode_run_time?.[0] || 0,
+        adult: false, // TV shows don't have adult rating
+        belongs_to_collection: null,
+        budget: 0,
+        homepage: (filmData as TVDetails).homepage,
+        imdb_id: '',
+        original_language: (filmData as TVDetails).original_language,
+        original_title: (filmData as TVDetails).original_name,
+        popularity: (filmData as TVDetails).popularity,
+        production_companies: (filmData as TVDetails).production_companies,
+        production_countries: (filmData as TVDetails).production_countries,
+        revenue: 0,
+        spoken_languages: (filmData as TVDetails).spoken_languages,
+        status: (filmData as TVDetails).status,
+        tagline: (filmData as TVDetails).tagline || '',
+        video: false,
+        vote_average: (filmData as TVDetails).vote_average,
+        vote_count: (filmData as TVDetails).vote_count,
+        videos: (filmData as TVDetails).videos,
+    } as FilmDetails : filmData as FilmDetails;
+
     try {
-        const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, options);
+        const response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${filmId}?language=en-US`, options);
 
         // dump the response if we fail
         if (!response.ok) {
@@ -230,15 +267,15 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
         }
 
         // parse the response 
-        const filmData: FilmDetails = await response.json();
+        const data: FilmDetails | TVDetails = await response.json();
 
-        if (!filmData) {
+        if (!data) {
             throw new Error('Invalid API response format');
         }
 
         // return detailed result in development only
         if (process.env.NODE_ENV === 'development') {
-            console.info(`Fetched film:`, filmData);
+            console.info(`Fetched ${mediaType}:`, data);
         }
 
         switch (variant) {
@@ -247,7 +284,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                     <article
                         className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
                         style={{
-                            backgroundImage: `url(https://image.tmdb.org/t/p/w500${filmData.poster_path})`
+                            backgroundImage: `url(https://image.tmdb.org/t/p/w500${media.poster_path})`
                         }}
                     >
                         {/* gradient overlay */}
@@ -255,10 +292,10 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
 
                         <div className="flex items-baseline justify-between gap-2">
                             {/* title */}
-                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{filmData.title}</h3>
+                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{media.title}</h3>
 
                             {/* flag icon -- where it was made */}
-                            <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={filmData.origin_country?.[0] || 'Unknown'} data-alt="country of origin">{filmData.origin_country?.[0] || 'Unknown'}</p>
+                            <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin">{media.origin_country?.[0] || 'Unknown'}</p>
                         </div>
                     </article>
                 )
@@ -268,8 +305,8 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                         <FluidColumn
                             id={`film-details-${filmId}`}
                             data-film-id={filmId}
-                            data-film-title={filmData.title}
-                            backgroundImage={`https://image.tmdb.org/t/p/w500${filmData.poster_path}`}
+                            data-film-title={media.title}
+                            backgroundImage={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
                         >
                             {/* Semi-transparent overlay */}
                             <div className="absolute inset-0 bg-background/50 backdrop-blur-xl" />
@@ -286,23 +323,23 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
 
                                 {/* Content section */}
                                 <div className="relative z-10 flex flex-col">
-                                    {filmData.poster_path && <PosterOrBioPhoto film={filmData.poster_path} />}
+                                    {media.poster_path && <PosterOrBioPhoto film={media.poster_path} />}
 
-                                    <HeroTitle title={filmData.title} />
+                                    <HeroTitle title={media.title} />
 
                                     {/* <p data-id="tagline" data-title={filmData.tagline}>Tagline: {filmData.tagline}</p> */}
 
                                     {/* film metadata */}
                                     <div className="flex flex-col mb-4">
                                         <div className="flex gap-4 font-[500] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start text-xl">
-                                            <GenreList data={filmData} />
+                                            <GenreList data={media} />
                                         </div>
                                         <div className="flex gap-4 font-[450] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start">
-                                            <Runtime data={filmData} />
-                                            <SpokenLanguages data={filmData} />
-                                            <AgeRating data={filmData} />
-                                            <OriginCountry data={filmData} />
-                                            <Rating data={filmData} />
+                                            <Runtime data={media} />
+                                            <SpokenLanguages data={media} />
+                                            <AgeRating data={media} />
+                                            <OriginCountry data={media} />
+                                            <Rating data={media} />
                                         </div>
                                         <div className="flex gap-4 font-[550] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start">
                                             {/* <ProductionCompanies data={filmData} /> */}
@@ -318,15 +355,30 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                     <div className="flex flex-wrap w-full max-w-[110ch]">
                                         {credits?.crew && (
                                             <>
-                                                <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                                {credits.crew.some(crew => crew.job === 'Director of Photography') && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                                <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director" className="w-full pb-4" topLevel />
+                                                {credits.crew.some((crew: CrewCredit) => 
+                                                    crew.job?.toLowerCase() === 'director of photography' || 
+                                                    crew.jobs?.some(job => job.job.toLowerCase() === 'director of photography')
+                                                ) && (
+                                                    <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director of Photography" topLevel />
                                                 )}
-                                                {credits.crew.some(crew => crew.job === 'Executive Producer') && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                                {credits.crew.some((crew: CrewCredit) => 
+                                                    crew.job?.toLowerCase() === 'executive producer' || 
+                                                    crew.jobs?.some(job => job.job.toLowerCase() === 'executive producer')
+                                                ) && (
+                                                    <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Executive Producer" topLevel />
                                                 )}
-                                                {credits.crew.some(crew => crew.job === 'Screenplay') && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
+                                                {credits.crew.some((crew: CrewCredit) => 
+                                                    crew.job?.toLowerCase() === 'screenplay' || 
+                                                    crew.jobs?.some(job => job.job.toLowerCase() === 'screenplay')
+                                                ) && (
+                                                    <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Screenplay" topLevel />
+                                                )}
+                                                {credits.crew.some((crew: CrewCredit) => 
+                                                    crew.job?.toLowerCase() === 'creator' || 
+                                                    crew.jobs?.some(job => job.job.toLowerCase() === 'creator')
+                                                ) && (
+                                                    <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Creator" topLevel />
                                                 )}
                                             </>
                                         )}
@@ -336,7 +388,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                     <div className="my-12">
                                         <h2
                                             className="font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase">Overview</h2>
-                                        <p id="overview" className="text-xl md:text-3xl max-w-prose whitespace-pre-wrap">{filmData.overview}</p>
+                                        <p id="overview" className="text-xl md:text-3xl max-w-prose whitespace-pre-wrap">{media.overview}</p>
                                     </div>
                                 </div>
                             </div>
@@ -346,7 +398,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                         <FluidColumn
                             id={`cast-details-${filmId}`}
                             data-film-id={filmId}
-                            data-film-title={filmData.title}
+                            data-film-title={media.title}
                         >
                             <div className="
                                 col-span-full
@@ -364,22 +416,110 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
                             >
                                 {/* cast members - show first 12 cast members */}
-                                {credits?.cast && credits.cast.slice(0, 12).map((castMember: CastCredit) => (
-                                    <CastMember
-                                        key={castMember.id}
-                                        cast={credits.cast}
-                                        creditTitle={castMember.character}
-                                    />
-                                ))}
+                                {credits?.cast && credits.cast
+                                    .filter((member: CastCredit, index: number, self: CastCredit[]) => {
+                                        // For TV shows, only show named characters in the top cast
+                                        if (mediaType === 'tv') {
+                                            const firstRole = member.roles?.[0];
+                                            // Only include if it's a named character (not "Self" or "Himself" etc.)
+                                            const isNamedCharacter = firstRole?.character && 
+                                                !firstRole.character.toLowerCase().includes('self') &&
+                                                !firstRole.character.toLowerCase().includes('himself') &&
+                                                !firstRole.character.toLowerCase().includes('herself');
+                                            
+                                            // Calculate 10% of total episodes
+                                            const totalEpisodes = member.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            const tvDetails = media as unknown as TVDetails;
+                                            const tenPercentOfEpisodes = Math.ceil(tvDetails.number_of_episodes * 0.1);
+                                            
+                                            // Only include if this is the first occurrence of this actor and they've appeared in more than 10% of episodes
+                                            return isNamedCharacter && 
+                                                totalEpisodes >= tenPercentOfEpisodes &&
+                                                index === self.findIndex((m: CastCredit) => m.id === member.id);
+                                        }
+                                        // For movies, just use the id
+                                        return index === self.findIndex((m: CastCredit) => m.id === member.id);
+                                    })
+                                    .sort((a: CastCredit, b: CastCredit) => {
+                                        // Sort by total episode count for TV shows
+                                        if (mediaType === 'tv') {
+                                            const aEpisodes = a.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            const bEpisodes = b.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            return bEpisodes - aEpisodes;
+                                        }
+                                        // For movies, sort by order
+                                        return (a.order || 0) - (b.order || 0);
+                                    })
+                                    .slice(0, 12)
+                                    .map((castMember: CastCredit) => {
+                                        // For TV shows, use the first role's character name
+                                        const character = mediaType === 'tv' 
+                                            ? castMember.roles?.[0]?.character || castMember.character 
+                                            : castMember.character;
+                                            
+                                        return (
+                                            <CastMember
+                                                key={`${castMember.id}-${castMember.credit_id}-${character}`}
+                                                cast={credits.cast as CastCredit[]}
+                                                creditTitle={character}
+                                            />
+                                        );
+                                    })}
                                 <ViewMoreLink href={`#full-cast`} text="View full cast" />
                             </div>
                         </FluidColumn>
+
+                        {/* Full cast section for TV shows */}
+                        {mediaType === 'tv' && credits?.cast && (
+                            <FluidColumn
+                                id={`full-cast-${filmId}`}
+                                data-film-id={filmId}
+                                data-film-title={media.title}
+                            >
+                                <div className="
+                                    col-span-full
+                                    col-start-0 lg:col-start-1
+                                    col-end-1 lg:col-end-2
+                                    flex lg:justify-end items-baseline"
+                                >
+                                    <CastAndCrewTitle title="Full Cast" />
+                                </div>
+
+                                <div className="
+                                    col-span-full
+                                    col-start-1 lg:col-start-2
+                                    -col-end-1
+                                    flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
+                                >
+                                    {credits.cast
+                                        .filter((member: CastCredit, index: number, self: CastCredit[]) => 
+                                            // Only include if this is the first occurrence of this actor
+                                            index === self.findIndex((m: CastCredit) => m.id === member.id)
+                                        )
+                                        .sort((a: CastCredit, b: CastCredit) => {
+                                            const aEpisodes = a.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            const bEpisodes = b.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            return bEpisodes - aEpisodes;
+                                        })
+                                        .map((castMember: CastCredit) => {
+                                            const character = castMember.roles?.[0]?.character || castMember.character;
+                                            return (
+                                                <CastMember
+                                                    key={`full-${castMember.id}-${castMember.credit_id}-${character}`}
+                                                    cast={credits.cast as CastCredit[]}
+                                                    creditTitle={character}
+                                                />
+                                            );
+                                        })}
+                                </div>
+                            </FluidColumn>
+                        )}
 
                         {/* TOP-LEVEL CREW DETAILS */}
                         <FluidColumn
                             id={`crew-details-${filmId}`}
                             data-film-id={filmId}
-                            data-film-title={filmData.title}
+                            data-film-title={media.title}
                         >
                             <div className="
                                 col-span-full
@@ -392,27 +532,97 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
 
                             <div className="
                                 col-span-full
-                                col-start-1 lg:col-start-2
+                                col-start-0 lg:col-start-2
                                 -col-end-1
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
                             >
                                 {credits?.crew && (
                                     <>
-                                        <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
-                                        <CrewMember crew={credits.crew} creditTitle="Production Design" />
-                                        <CrewMember crew={credits.crew} creditTitle="Art Direction" />
-                                        <CrewMember crew={credits.crew} creditTitle="Producer" />
-                                        <CrewMember crew={credits.crew} creditTitle="Costume Design" />
-                                        <CrewMember crew={credits.crew} creditTitle="Screenplay" />
-                                        <CrewMember crew={credits.crew} creditTitle="Novel" />
-                                        <CrewMember crew={credits.crew} creditTitle="Assistant Editor" />
-                                        <CrewMember crew={credits.crew} creditTitle="Casting" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director" className="w-full pb-4" topLevel />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director of Photography" topLevel />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Executive Producer" topLevel />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Writer" topLevel />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Production Design" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Art Direction" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Producer" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Costume Design" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Screenplay" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Novel" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Assistant Editor" />
+                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Casting" />
                                     </>
                                 )}
                                 <ViewMoreLink href={`#full-crew`} text="View full crew" />
+                            </div>
+                        </FluidColumn>
+
+                        {/* Full crew section */}
+                        <FluidColumn
+                            id={`full-crew-${filmId}`}
+                            data-film-id={filmId}
+                            data-film-title={media.title}
+                        >
+                            <div className="
+                                col-span-full
+                                col-start-0 lg:col-start-1
+                                col-end-1 lg:col-end-2
+                                flex lg:justify-end items-baseline"
+                            >
+                                <CastAndCrewTitle title="Full Crew" />
+                            </div>
+
+                            <div className="
+                                col-span-full
+                                col-start-0 lg:col-start-2
+                                -col-end-1
+                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8 "
+                            >
+                                {credits?.crew && (
+                                    <>
+                                        {/* Group crew by department */}
+                                        {(() => {
+                                            const groupedCrew = credits.crew.reduce((acc: { [key: string]: CrewCredit[] }, member: CrewCredit) => {
+                                                const department = member.department || 'Other';
+                                                if (!acc[department]) {
+                                                    acc[department] = [];
+                                                }
+                                                acc[department].push(member);
+                                                return acc;
+                                            }, {});
+
+                                            return Object.entries(groupedCrew)
+                                                .sort(([a], [b]) => a.localeCompare(b))
+                                                .map(([department, members]) => (
+                                                    <React.Fragment key={department}>
+                                                        <div className="col-span-full">
+                                                            <h3 className="text-xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 self-baseline font-semibold uppercase m-0 p-0 text-center sm:text-left w-full mt-8 sm:mt-0 mb-0 sm:mb-2">
+                                                                {department}
+                                                            </h3>
+                                                        </div>
+                                                        {(() => {
+                                                            // Get unique jobs in this department
+                                                            const uniqueJobs = Array.from(new Set(
+                                                                (members as CrewCredit[]).map((member: CrewCredit) => 
+                                                                    mediaType === 'tv' 
+                                                                        ? member.jobs?.map((job: { job: string }) => job.job) || []
+                                                                        : [member.job]
+                                                                ).flat()
+                                                            )).sort();
+
+                                                            return uniqueJobs.map((job: string) => (
+                                                                <CrewMember
+                                                                    key={job}
+                                                                    crew={members as CrewCredit[]}
+                                                                    creditTitle={job}
+                                                                    className="w-full"
+                                                                />
+                                                            ));
+                                                        })()}
+                                                    </React.Fragment>
+                                                ));
+                                        })()}
+                                    </>
+                                )}
                             </div>
                         </FluidColumn>
                     </div>
@@ -420,7 +630,7 @@ const FilmCard = async ({ film: film, variant }: FilmCardProps) => {
             default:
                 return (
                     <article>
-                        <h3>{filmData.title}</h3>
+                        <h3>{media.title}</h3>
                     </article>
                 )
         }

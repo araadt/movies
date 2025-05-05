@@ -118,7 +118,7 @@ const ShowReleases = async ({ displayQuantity, variant }: { displayQuantity: num
                 <div className={`grid ${gridCols} gap-2`}>
                     {films.sort((a, b) => b.popularity - a.popularity).map((film) => (
                         <Link href={`/film/${film.id}`} key={film.id}>
-                            <FilmCard film={film.id} variant="poster" />
+                            <FilmCard film={film.id} variant="poster" mediaType="movie" />
                         </Link>
                     ))}
                 </div>

@@ -1,11 +1,11 @@
 // VDR
 
-// ENV REQUIREMENTS:
-// - TMDB_API_KEY
 
 import { MovieCredits } from "@/types/movieCredits";
 import { Person, PersonCredits } from "@/types/peopleDetails";
 import { FilmDetails } from "@/types/movieDetails";
+import { TVDetails } from "@/types/tvDetails";
+import { TVCredits } from "@/types/tvCredits";
 
 // TMDB BASIC GET REQUEST OPTIONS
 export const options = {
@@ -17,6 +17,13 @@ export const options = {
 };
 
 export const getFilmDetails = async (filmId: number): Promise<FilmDetails | null> => {
+// ENV REQUIREMENTS:
+// - TMDB_API_KEY
+
+    if (!process.env.TMDB_API_KEY) {
+        throw new Error('TMDB_API_KEY is not set');
+    }
+
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${filmId}?language=en-US`, {
             ...options,
@@ -44,6 +51,10 @@ export const getFilmDetails = async (filmId: number): Promise<FilmDetails | null
 export const getFilmCredits = async (filmId: string | number): Promise<MovieCredits | null> => {
     const numericFilmId = typeof filmId === 'string' ? parseInt(filmId, 10) : filmId;
 
+    if (!process.env.TMDB_API_KEY) {
+        throw new Error('TMDB_API_KEY is not set');
+    }
+
     try {
         const response = await fetch(`https://api.themoviedb.org/3/movie/${numericFilmId}/credits?language=en-US`, {
             ...options,
@@ -68,8 +79,57 @@ export const getFilmCredits = async (filmId: string | number): Promise<MovieCred
     }
 }
 
+export const getTVDetails = async (tvId: string | number): Promise<TVDetails | null> => {
+    const numericTvId = typeof tvId === 'string' ? parseInt(tvId, 10) : tvId;
+
+    if (!process.env.TMDB_API_KEY) {
+        throw new Error('TMDB_API_KEY is not set');
+    }
+
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/tv/${numericTvId}?language=en-US`, {
+            ...options,
+            cache: 'no-store',
+            next: { revalidate: 0 }
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.warn('TV show not found:', {
+                id: numericTvId,
+                status: response.status,
+                statusText: response.statusText
+            });
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching TV show details:', error);
+        return null;
+    }
+}
+
+export async function getTVCredits(tvId: number): Promise<TVCredits | null> {
+    try {
+        const response = await fetch(`https://api.themoviedb.org/3/tv/${tvId}/aggregate_credits?language=en-US`, options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching TV credits:', error);
+        return null;
+    }
+}
+
 export const getPerson = async (personId: string | number): Promise<Person | null> => {
     const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
+
+    if (!process.env.TMDB_API_KEY) {
+        throw new Error('TMDB_API_KEY is not set');
+    }
 
     try {
         const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}?language=en-US`, {
@@ -97,6 +157,10 @@ export const getPerson = async (personId: string | number): Promise<Person | nul
 
 export const getPersonCredits = async (personId: string | number): Promise<PersonCredits | null> => {
     const numericPersonId = typeof personId === 'string' ? parseInt(personId, 10) : personId;
+
+    if (!process.env.TMDB_API_KEY) {
+        throw new Error('TMDB_API_KEY is not set');
+    }
 
     try {
         const response = await fetch(`https://api.themoviedb.org/3/person/${numericPersonId}/combined_credits?language=en-US`, {

@@ -11,9 +11,9 @@ type CastMemberProps = {
     creditTitle: string;
     className?: string;
     topLevel?: boolean;
-};
+}
 
-const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps) => {
+export const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps) => {
     // Get the first four cast members before filtering
     // This is kind of an opinionated choice to limit four, but that's on the basis of the number of columns in the grid and nothing more
     const topBilledCastIds = cast.slice(0, 4).map(member => member.id);
@@ -34,8 +34,15 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
 
     // Filter cast members by character and limit to 3
     const members = cast
-        .filter(member => member.character.toLowerCase() === creditTitle.toLowerCase())
-        .slice(0, 3);
+        .filter(member => {
+            // For TV shows, check the roles array
+            if (member.roles) {
+                return member.roles.some(role => role.character === creditTitle);
+            }
+            // For movies, check the direct character property
+            return member.character === creditTitle;
+        })
+        .slice(0, 1); // Only show the first occurrence of each character
 
     if (members.length === 0) return null;
 
@@ -57,16 +64,18 @@ const CastMember = ({ cast, creditTitle, className, topLevel }: CastMemberProps)
             {members.map((member, index) => {
                 const isTopBilled = topBilledCastIds.includes(member.id);
                 return (
-                    <p key={member.id} className={`${isTopBilled ? 'text-2xl' : nameSize} font-sans text-foreground font-medium uppercase flex-1  ${index < members.length - 1 ? 'mr-2' : ''}`}>
+                    <p key={`${member.credit_id}-${member.id}`} className={`${isTopBilled ? 'text-2xl' : nameSize} font-sans text-foreground font-medium uppercase flex-1`}>
                         <Link href={`/people/${member.id}`} className="hover:underline">
                             {member.name}
                         </Link>
-                        {index < members.length - 1 && ','}
+                        {member.total_episode_count && (
+                            <span className="text-xs text-foreground/40">{" "}
+                                ({member.total_episode_count} episodes)
+                            </span>
+                        )}
                     </p>
                 );
             })}
         </div>
     );
-};
-
-export default CastMember; 
+} 

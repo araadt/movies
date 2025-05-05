@@ -19,12 +19,24 @@ export type CastCredit = Person & {
     character: string;
     credit_id: string;
     order: number;
+    roles?: Array<{
+        credit_id: string;
+        character: string;
+        episode_count: number;
+    }>;
+    total_episode_count?: number;
 };
 
 export type CrewCredit = Person & {
     credit_id: string;
     department: string;
     job: string;
+    jobs?: Array<{
+        credit_id: string;
+        job: string;
+        episode_count: number;
+    }>;
+    total_episode_count?: number;
 };
 
 export type PersonCredits = {
