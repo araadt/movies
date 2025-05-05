@@ -450,7 +450,7 @@ const FilmCard = async ({ film: film, variant, mediaType }: FilmCardProps) => {
                                         // For movies, sort by order
                                         return (a.order || 0) - (b.order || 0);
                                     })
-                                    .slice(0, 12)
+                                    .slice(0, 8)
                                     .map((castMember: CastCredit) => {
                                         // For TV shows, use the first role's character name
                                         const character = mediaType === 'tv' 
@@ -468,53 +468,7 @@ const FilmCard = async ({ film: film, variant, mediaType }: FilmCardProps) => {
                                 <ViewMoreLink href={`#full-cast`} text="View full cast" />
                             </div>
                         </FluidColumn>
-
-                        {/* Full cast section for TV shows */}
-                        {mediaType === 'tv' && credits?.cast && (
-                            <FluidColumn
-                                id={`full-cast-${filmId}`}
-                                data-film-id={filmId}
-                                data-film-title={media.title}
-                            >
-                                <div className="
-                                    col-span-full
-                                    col-start-0 lg:col-start-1
-                                    col-end-1 lg:col-end-2
-                                    flex lg:justify-end items-baseline"
-                                >
-                                    <CastAndCrewTitle title="Full Cast" />
-                                </div>
-
-                                <div className="
-                                    col-span-full
-                                    col-start-1 lg:col-start-2
-                                    -col-end-1
-                                    flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
-                                >
-                                    {credits.cast
-                                        .filter((member: CastCredit, index: number, self: CastCredit[]) => 
-                                            // Only include if this is the first occurrence of this actor
-                                            index === self.findIndex((m: CastCredit) => m.id === member.id)
-                                        )
-                                        .sort((a: CastCredit, b: CastCredit) => {
-                                            const aEpisodes = a.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
-                                            const bEpisodes = b.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
-                                            return bEpisodes - aEpisodes;
-                                        })
-                                        .map((castMember: CastCredit) => {
-                                            const character = castMember.roles?.[0]?.character || castMember.character;
-                                            return (
-                                                <CastMember
-                                                    key={`full-${castMember.id}-${castMember.credit_id}-${character}`}
-                                                    cast={credits.cast as CastCredit[]}
-                                                    creditTitle={character}
-                                                />
-                                            );
-                                        })}
-                                </div>
-                            </FluidColumn>
-                        )}
-
+                        
                         {/* TOP-LEVEL CREW DETAILS */}
                         <FluidColumn
                             id={`crew-details-${filmId}`}
@@ -538,27 +492,77 @@ const FilmCard = async ({ film: film, variant, mediaType }: FilmCardProps) => {
                             >
                                 {credits?.crew && (
                                     <>
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director" className="w-full pb-4" topLevel />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Director of Photography" topLevel />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Executive Producer" topLevel />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Writer" topLevel />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Production Design" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Art Direction" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Producer" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Costume Design" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Screenplay" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Novel" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Assistant Editor" />
-                                        <CrewMember crew={credits.crew as CrewCredit[]} creditTitle="Casting" />
+                                        <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Writer" topLevel />
+                                        <CrewMember crew={credits.crew} creditTitle="Production Design" />
+                                        <CrewMember crew={credits.crew} creditTitle="Art Direction" />
+                                        <CrewMember crew={credits.crew} creditTitle="Producer" />
+                                        <CrewMember crew={credits.crew} creditTitle="Costume Design" />
+                                        <CrewMember crew={credits.crew} creditTitle="Screenplay" />
+                                        <CrewMember crew={credits.crew} creditTitle="Novel" />
+                                        <CrewMember crew={credits.crew} creditTitle="Assistant Editor" />
+                                        <CrewMember crew={credits.crew} creditTitle="Casting" />
                                     </>
                                 )}
                                 <ViewMoreLink href={`#full-crew`} text="View full crew" />
                             </div>
                         </FluidColumn>
 
+                        {/* Full cast section for both movies and TV shows */}
+                        <FluidColumn
+                            id={`full-cast`}
+                            data-film-id={filmId}
+                            data-film-title={media.title}
+                        >
+                            <div className="
+                                col-span-full
+                                col-start-0 lg:col-start-1
+                                col-end-1 lg:col-end-2
+                                flex lg:justify-end items-baseline"
+                            >
+                                <CastAndCrewTitle title="Full Cast" />
+                            </div>
+
+                            <div className="
+                                col-span-full
+                                col-start-1 lg:col-start-2
+                                -col-end-1
+                                flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
+                            >
+                                {credits.cast
+                                    .filter((member: CastCredit, index: number, self: CastCredit[]) => 
+                                        // Only include if this is the first occurrence of this actor
+                                        index === self.findIndex((m: CastCredit) => m.id === member.id)
+                                    )
+                                    .sort((a: CastCredit, b: CastCredit) => {
+                                        if (mediaType === 'tv') {
+                                            const aEpisodes = a.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            const bEpisodes = b.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
+                                            return bEpisodes - aEpisodes;
+                                        }
+                                        // For movies, sort by order
+                                        return (a.order || 0) - (b.order || 0);
+                                    })
+                                    .map((castMember: CastCredit) => {
+                                        const character = mediaType === 'tv' 
+                                            ? castMember.roles?.[0]?.character || castMember.character 
+                                            : castMember.character;
+                                        return (
+                                            <CastMember
+                                                key={`full-${castMember.id}-${castMember.credit_id}-${character}`}
+                                                cast={credits.cast as CastCredit[]}
+                                                creditTitle={character}
+                                            />
+                                        );
+                                    })}
+                            </div>
+                        </FluidColumn>
+
                         {/* Full crew section */}
                         <FluidColumn
-                            id={`full-crew-${filmId}`}
+                            id={`full-crew`}
                             data-film-id={filmId}
                             data-film-title={media.title}
                         >
