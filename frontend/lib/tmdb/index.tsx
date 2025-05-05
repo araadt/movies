@@ -1,6 +1,5 @@
 // VDR
 
-
 import { MovieCredits } from "@/types/movieCredits";
 import { Person, PersonCredits } from "@/types/peopleDetails";
 import { FilmDetails } from "@/types/movieDetails";
@@ -13,6 +12,48 @@ export const options = {
     headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.TMDB_API_KEY}`
+    }
+};
+
+export const getNowPlayingMovies = async (page: number = 1) => {
+    try {
+        if (!process.env.TMDB_API_KEY) {
+            throw new Error('TMDB_API_KEY is not set in environment variables');
+        }
+
+        const response = await fetch(`https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`, {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json',
+                'Authorization': `Bearer ${process.env.TMDB_API_KEY}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('API Error:', {
+                status: response.status,
+                statusText: response.statusText,
+                statusMessage: errorData?.status_message,
+                error: errorData
+            });
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.results) {
+            throw new Error('Invalid API response format');
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.info(`Fetched ${data.results.length} films:`, data.results);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching now playing movies:', error);
+        throw error;
     }
 };
 

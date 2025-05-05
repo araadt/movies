@@ -4,6 +4,8 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getNowPlayingMovies } from '@/lib/tmdb';
+import { getFilmDetails, getFilmCredits, getTVDetails, getTVCredits } from '@/lib/tmdb';
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -132,3 +134,40 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export async function fetchNowPlayingMovies(page: number = 1) {
+  try {
+    const data = await getNowPlayingMovies(page);
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: error instanceof Error ? error.message : 'An unknown error occurred' };
+  }
+}
+
+export async function fetchMediaData(filmId: number, mediaType: 'movie' | 'tv') {
+  try {
+    let data = null;
+    let creditData = null;
+
+    if (mediaType === 'movie') {
+      [data, creditData] = await Promise.all([
+        getFilmDetails(filmId),
+        getFilmCredits(filmId)
+      ]);
+    } else {
+      [data, creditData] = await Promise.all([
+        getTVDetails(filmId),
+        getTVCredits(filmId)
+      ]);
+    }
+
+    return { data, creditData, error: null };
+  } catch (error) {
+    console.error('Error fetching media data:', error);
+    return {
+      data: null,
+      creditData: null,
+      error: error instanceof Error ? error.message : 'An unknown error occurred'
+    };
+  }
+}
