@@ -27,9 +27,16 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
                 
                 if (result.error) {
                     setError(result.error);
-                } else {
+                } else if (result.data) {
                     setFilmData(result.data);
                     setCredits(result.creditData);
+
+                    if (process.env.NODE_ENV === 'development') {
+                        const title = mediaType === 'movie' 
+                            ? (result.data as FilmDetails).title 
+                            : (result.data as TVDetails).name;
+                        console.log('Loaded data for:', title);
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching film data:', err);
@@ -40,7 +47,7 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
         };
 
         loadData();
-    }, [film, mediaType]);
+    }, [ mediaType]);
 
     if (error) {
         return (
@@ -60,10 +67,7 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
     }
 
     if (isLoading || !filmData || !credits) {
-        return (
-            <div className="flex items-center justify-center w-full h-full flex-1 bg-background/50 bg-gradient-to-t from-background/50 to-background/0">
-            </div>
-        );
+        return 
     }
 
     // Transform TV data to match film data structure if needed
