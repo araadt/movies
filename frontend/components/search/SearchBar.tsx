@@ -55,7 +55,7 @@ export default function SearchBar({ variant }: { variant?: "header" | "standard"
                             control={form.control}
                             name="query"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="w-full">
                                     <FormControl>
                                         <Input
                                             className="border-none bg-transparent"
