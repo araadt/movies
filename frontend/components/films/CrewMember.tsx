@@ -44,7 +44,7 @@ export default function CrewMember({ crew, creditTitle, className, topLevel }: C
                     </Link>
                     {index < members.length - 1 && ','}
                     {member.total_episode_count && (
-                        <span className="text-xs text-foreground/40">
+                        <span className="invisible sm:visible text-xs text-foreground/40 ps-2">
                             ({member.total_episode_count} episodes)
                         </span>
                     )}

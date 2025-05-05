@@ -69,7 +69,7 @@ export const CastMember = ({ cast, creditTitle, className, topLevel }: CastMembe
                             {member.name}
                         </Link>
                         {member.total_episode_count && (
-                            <span className="text-xs text-foreground/40">{" "}
+                            <span className="invisible sm:visible text-xs text-foreground/40 ps-2 ">
                                 ({member.total_episode_count} episodes)
                             </span>
                         )}
