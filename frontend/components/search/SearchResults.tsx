@@ -85,14 +85,14 @@ export default function SearchResults({
 
     return (
         <div className="flex flex-col gap-4 w-full h-full">
-            <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Search Results for "{query}"</h1>
+            <div className="flex flex-col flex-wrap lg:flex-row gap-4 my-8 items-center lg:items-baseline justify-between">
+                <h1 className="text-3xl lg:text-2xl text-pretty">I think <span className="font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-4xl lg:text-3xl font-semibold uppercase">{query}</span> is a great idea</h1>
                 <div className="flex items-center gap-2">
-                    <p className="text-sm text-foreground/65">
-                        {totalResults} results found (<a href="#movie-results">{sortedMovies.length} Movies</a>, <a href="#tv-results">{sortedTV.length} TV Shows</a>)
+                    <p className="text-sm text-foreground/65 text-pretty">
+                        <span className="hidden lg:inline">We found</span> <strong><a href="#movie-results">{sortedMovies.length} Movies</a>, and <a href="#tv-results">{sortedTV.length} TV Shows</a></strong><span className="hidden lg:inline"> for {query}.</span>
                     </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-2 lg:mt-0">
                     <Label htmlFor="sort-mode" className={`text-sm self-stretch font-medium ${sortBy === 'popularity' ? 'text-primary' : 'text-foreground/65'}`}>
                         Popularity
                     </Label>
