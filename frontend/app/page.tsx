@@ -1,10 +1,9 @@
 'use client';
 import Hero from "@/components/hero";
-// import FilmMetadata from "@/components/films/FilmMetadata";
 import NewReleases from "@/components/films/NewReleases";
 import Image from "next/image";
 
-const DEFAULT_BLUR_URL = 'https://image.tmdb.org/t/p/w1280/ve72VxNqjGM69Uky4WTo2bK6rfq.jpg';
+const DEFAULT_BLUR_URL = process.env.NEXT_PUBLIC_DEFAULT_BLUR_URL || '';
 
 // TODO: Add a search bar
 // TODO: Add user profile section to protected route
