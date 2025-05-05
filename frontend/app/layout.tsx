@@ -74,26 +74,20 @@ export default function RootLayout({
           {/* The goal is to create space for metadata on the sides at larger breakpoints. */}
 
           <main className="min-h-screen h-full w-full flex flex-col items-center justify-center">
-            <nav id="nav-bar" className="w-full flex items-center justify-center border-b border-b-foreground/10 min-h-48 sm:min-h-24 m-0 p-0">
-              <div className="w-full text-sm md:text-base
-              grid grid-cols-1 sm:grid-cols-2 grid-flow-row lg:grid-cols-6 3xl:grid-cols-12 gap-4 m-0 p-0">
+            <nav id="nav-bar" className="w-full flex items-center justify-between text-sm md:text-base border-b border-b-foreground/10 min-h-16 sm:min-h-24 m-0 p-0 px-5">
                 <div className="flex justify-center sm:justify-start items-center gap-4
                     col-span-full sm:col-span-1 lg:col-span-2 col-start-1 lg:col-start-2
-                    m-0 p-0 mx-5">
+                    m-0 p-0">
                   <Link className="text-lg" href={"/"}>Andy's Films</Link>
                 </div>
 
                 <div className="
-                      flex justify-center sm:justify-end items-center gap-4 
-                      col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
-                    mx-5 p-0 ">
-                  {/* <p>Foo</p>
-                  <p>Bar</p>
-                  <p>Baz</p> */}
+                    flex justify-center sm:justify-end items-center gap-4 
+                    col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
+                    p-0 ">
                   <HeaderAuth />
                   <ThemeSwitcher />
                 </div>
-              </div>
 
             </nav>
 
@@ -101,13 +95,16 @@ export default function RootLayout({
               {children}
             </div>
 
-            <footer id="footer" className="w-full flex items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
-              <div className="flex flex-col gap-1">
+            <footer id="footer" className="w-full flex flex-col sm:flex-row gap-2 items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
+              <div className="flex flex-row gap-2 items-baseline">
                 <p>
-                  Made by Andy | May 2025
+                  Made by Andy
+                </p>
+                <p>
+                  May 2025
                 </p>
               </div>
-              <div className="flex gap-4 items-center ">
+              <div className="flex gap-4 items-baseline justify-end">
                 <p>
                   API provided by <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie DB</Link>
                 </p>
