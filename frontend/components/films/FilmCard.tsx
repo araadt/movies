@@ -205,25 +205,27 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
             case 'poster':
                 return (
                     <article
-                        className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
+                        className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300 border border-foreground/10 rounded-xs"
                     >
-                        <Image
-                            src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
-                            alt={media.title}
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover rounded-xs"
-                            priority
-                            placeholder="blur"
-                            blurDataURL={DEFAULT_BLUR_URL}
-                        />
-                        
+                        {media.poster_path && (
+                            <Image
+                                src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
+                                alt={media.title}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover rounded-xs"
+                                priority
+                                placeholder="blur"
+                                blurDataURL={DEFAULT_BLUR_URL}
+                            />
+                        )}
+
                         {/* gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xs group-hover:opacity-100 opacity-20 transition-opacity duration-300" />
 
                         <div className="flex items-baseline justify-between gap-2">
                             {/* title */}
-                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{media.title}</h3>
+                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{media.title} <span className="text-xs text-foreground/90">{media.release_date ? `(${media.release_date.split('-')[0]})` : ''}</span></h3>
 
                             {/* flag icon -- where it was made */}
                             <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin">{media.origin_country?.[0] || 'Unknown'}</p>
@@ -249,7 +251,7 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                 placeholder="blur"
                                 blurDataURL={DEFAULT_BLUR_URL}
                             />
-                            
+
                             {/* Semi-transparent overlay */}
                             <div className="absolute inset-0 bg-background/50 backdrop-blur-xl" />
 
@@ -297,30 +299,30 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                         {credits?.crew && (
                                             <>
                                                 <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
-                                                {credits.crew.some((crew) => 
-                                                    crew.job?.toLowerCase() === 'director of photography' || 
+                                                {credits.crew.some((crew) =>
+                                                    crew.job?.toLowerCase() === 'director of photography' ||
                                                     crew.jobs?.some(job => job.job.toLowerCase() === 'director of photography')
                                                 ) && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
-                                                )}
-                                                {credits.crew.some((crew) => 
-                                                    crew.job?.toLowerCase() === 'executive producer' || 
+                                                        <CrewMember crew={credits.crew} creditTitle="Director of Photography" topLevel />
+                                                    )}
+                                                {credits.crew.some((crew) =>
+                                                    crew.job?.toLowerCase() === 'executive producer' ||
                                                     crew.jobs?.some(job => job.job.toLowerCase() === 'executive producer')
                                                 ) && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
-                                                )}
-                                                {credits.crew.some((crew) => 
-                                                    crew.job?.toLowerCase() === 'screenplay' || 
+                                                        <CrewMember crew={credits.crew} creditTitle="Executive Producer" topLevel />
+                                                    )}
+                                                {credits.crew.some((crew) =>
+                                                    crew.job?.toLowerCase() === 'screenplay' ||
                                                     crew.jobs?.some(job => job.job.toLowerCase() === 'screenplay')
                                                 ) && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
-                                                )}
-                                                {credits.crew.some((crew) => 
-                                                    crew.job?.toLowerCase() === 'creator' || 
+                                                        <CrewMember crew={credits.crew} creditTitle="Screenplay" topLevel />
+                                                    )}
+                                                {credits.crew.some((crew) =>
+                                                    crew.job?.toLowerCase() === 'creator' ||
                                                     crew.jobs?.some(job => job.job.toLowerCase() === 'creator')
                                                 ) && (
-                                                    <CrewMember crew={credits.crew} creditTitle="Creator" topLevel />
-                                                )}
+                                                        <CrewMember crew={credits.crew} creditTitle="Creator" topLevel />
+                                                    )}
                                             </>
                                         )}
                                     </div>
@@ -362,18 +364,18 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                         if (mediaType === 'tv') {
                                             const firstRole = member.roles?.[0];
                                             // Only include if it's a named character (not "Self" or "Himself" etc.)
-                                            const isNamedCharacter = firstRole?.character && 
+                                            const isNamedCharacter = firstRole?.character &&
                                                 !firstRole.character.toLowerCase().includes('self') &&
                                                 !firstRole.character.toLowerCase().includes('himself') &&
                                                 !firstRole.character.toLowerCase().includes('herself');
-                                            
+
                                             // Calculate 10% of total episodes
                                             const totalEpisodes = member.roles?.reduce((sum, role) => sum + role.episode_count, 0) || 0;
                                             const tvDetails = media as unknown as TVDetails;
                                             const tenPercentOfEpisodes = Math.ceil(tvDetails.number_of_episodes * 0.1);
-                                            
+
                                             // Only include if this is the first occurrence of this actor and they've appeared in more than 10% of episodes
-                                            return isNamedCharacter && 
+                                            return isNamedCharacter &&
                                                 totalEpisodes >= tenPercentOfEpisodes &&
                                                 index === self.findIndex((m) => m.id === member.id);
                                         }
@@ -393,10 +395,10 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                     .slice(0, 8)
                                     .map((castMember) => {
                                         // For TV shows, use the first role's character name
-                                        const character = mediaType === 'tv' 
-                                            ? castMember.roles?.[0]?.character || castMember.character 
+                                        const character = mediaType === 'tv'
+                                            ? castMember.roles?.[0]?.character || castMember.character
                                             : castMember.character;
-                                            
+
                                         return (
                                             <CastMember
                                                 key={`${castMember.id}-${castMember.credit_id}-${character}`}
@@ -408,7 +410,7 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                 <ViewMoreLink href={`#full-cast`} text="View full cast" />
                             </div>
                         </FluidColumn>
-                        
+
                         {/* TOP-LEVEL CREW DETAILS */}
                         <FluidColumn
                             id={`crew-details-${media.id}`}
@@ -472,7 +474,7 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                 flex flex-col sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 gap-4 sm:gap-8"
                             >
                                 {credits.cast
-                                    .filter((member: CastCredit, index: number, self: CastCredit[]) => 
+                                    .filter((member: CastCredit, index: number, self: CastCredit[]) =>
                                         // Only include if this is the first occurrence of this actor
                                         index === self.findIndex((m: CastCredit) => m.id === member.id)
                                     )
@@ -486,8 +488,8 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                         return (a.order || 0) - (b.order || 0);
                                     })
                                     .map((castMember: CastCredit) => {
-                                        const character = mediaType === 'tv' 
-                                            ? castMember.roles?.[0]?.character || castMember.character 
+                                        const character = mediaType === 'tv'
+                                            ? castMember.roles?.[0]?.character || castMember.character
                                             : castMember.character;
                                         return (
                                             <CastMember
@@ -546,8 +548,8 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                                         {(() => {
                                                             // Get unique jobs in this department
                                                             const uniqueJobs = Array.from(new Set(
-                                                                (members as CrewCredit[]).map((member: CrewCredit) => 
-                                                                    mediaType === 'tv' 
+                                                                (members as CrewCredit[]).map((member: CrewCredit) =>
+                                                                    mediaType === 'tv'
                                                                         ? member.jobs?.map((job: { job: string }) => job.job) || []
                                                                         : [member.job]
                                                                 ).flat()
