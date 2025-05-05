@@ -4,8 +4,6 @@
 // See the documentation for more information in-memory request caching:
 // ! DOCS: https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#server-components
 
-import { useEffect, useState } from "react";
-import { getFilmCredits, getFilmDetails, getTVDetails, getTVCredits, options } from "@/lib/tmdb";
 import { FilmDetails } from "@/types/movieDetails";
 import { TVDetails } from "@/types/tvDetails";
 import { CastCredit, CrewCredit } from "@/types/peopleDetails";
@@ -13,11 +11,13 @@ import FluidColumn from "@/components/layout/column-wrapper";
 import CrewMember from "./CrewMember";
 import { CastMember } from "./CastMember";
 import { Badge } from "../ui/badge";
-import { Clock, Star, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import { Clock, Star, ArrowUpRight } from 'lucide-react';
 import Link from "next/link";
 import React from "react";
-import { fetchMediaData } from "@/app/actions";
+import Image from "next/image";
+
+// Default blur placeholder for images
+const DEFAULT_BLUR_URL = 'https://image.tmdb.org/t/p/w1280/ve72VxNqjGM69Uky4WTo2bK6rfq.jpg';
 
 type FilmCardProps = {
     media: FilmDetails;
@@ -206,10 +206,18 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                 return (
                     <article
                         className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300"
-                        style={{
-                            backgroundImage: `url(https://image.tmdb.org/t/p/w500${media.poster_path})`
-                        }}
                     >
+                        <Image
+                            src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
+                            alt={media.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover rounded-xs"
+                            priority
+                            placeholder="blur"
+                            blurDataURL={DEFAULT_BLUR_URL}
+                        />
+                        
                         {/* gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-xs group-hover:opacity-100 opacity-20 transition-opacity duration-300" />
 
@@ -229,8 +237,19 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                             id={`film-details-${media.id}`}
                             data-film-id={media.id}
                             data-film-title={media.title}
-                            backgroundImage={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
                         >
+                            {/* Background image */}
+                            <Image
+                                src={`https://image.tmdb.org/t/p/w1280${media.backdrop_path}`}
+                                alt={media.title}
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                className="object-cover"
+                                priority
+                                placeholder="blur"
+                                blurDataURL={DEFAULT_BLUR_URL}
+                            />
+                            
                             {/* Semi-transparent overlay */}
                             <div className="absolute inset-0 bg-background/50 backdrop-blur-xl" />
 
