@@ -13,7 +13,7 @@ Resource needed for the project is movie api, examples include Imdb, MovieDB etc
 - ✅ User can then see all about the movie ratings, about, actors present on each separate movie page
  
 ### Stretch Goals:
-- User can filter movies by partial text string
+- ✅ User can filter movies by partial text string
 - ✅ Implement proper pagination
 - User can create an account
 - User can create their own watch list

@@ -47,7 +47,7 @@ export default function SearchBar({ variant }: { variant?: "header" | "standard"
     }
 
     return (
-        <section className={`flex items-center justify-center ${isHidden ? "hidden" : ""}`}>
+        <section className={`flex items-center justify-center ${isHidden ? "hidden" : ""}`} data-testid="search-bar">
             <div className={`w-full max-w-2xl p-2 flex items-center gap-2 border border-foreground/10 rounded-md ${variant === "header" ? "p-1 px-2 max-h-9" : ""}`}>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-2xl flex items-center gap-2">
@@ -66,7 +66,7 @@ export default function SearchBar({ variant }: { variant?: "header" | "standard"
                             )}
                         />
 
-                        <Button type="submit" variant="ghost">
+                        <Button type="submit" variant="ghost" data-testid="search-bar-button">
                             <Search className="w-4 h-4" />
                         </Button>
                     </form>
