@@ -57,6 +57,8 @@ export const CastAndCrewTitle = ({ title, className }: { title: string, classNam
             <h2
                 className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold m-0 p-0 self-baseline uppercase ${className}`}
                 data-id={`credit-title-${title}`}
+                data-testid={`credit-title`}
+                data-title={title}
                 data-type={title}
             >
                 {title}
@@ -95,7 +97,7 @@ const AgeRating = ({ data }: { data: FilmDetails }) => {
 const GenreList = ({ data }: { data: FilmDetails }) => {
     return (
         <div className="flex gap-1">
-            <p data-id="genres" data-title={data.genres.map(genre => genre.name).join(', ')}>{data.genres.map(genre => genre.name).join(', ')}</p>
+            <p data-id="genres" data-testid="media-genres" data-title={data.genres.map(genre => genre.name).join(', ')}>{data.genres.map(genre => genre.name).join(', ')}</p>
         </div>
     )
 }
@@ -225,10 +227,10 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
 
                         <div className="flex items-baseline justify-between gap-2">
                             {/* title */}
-                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty">{media.title} <span className="text-xs text-foreground/90">{media.release_date ? `(${media.release_date.split('-')[0]})` : ''}</span></h3>
+                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty" data-testid="media-title">{media.title} <span className="text-xs text-foreground/90" data-testid="media-release-date">{media.release_date ? `(${media.release_date.split('-')[0]})` : ''}</span></h3>
 
                             {/* flag icon -- where it was made */}
-                            <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin">{media.origin_country?.[0] || 'Unknown'}</p>
+                            <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin" data-testid="media-origin-country">{media.origin_country?.[0] || 'Unknown'}</p>
                         </div>
                     </article>
                 )
@@ -295,7 +297,7 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                     </div>
 
                                     {/* top-level crew details */}
-                                    <div className="flex flex-wrap w-full max-w-[110ch]">
+                                    <div className="flex flex-wrap w-full max-w-[110ch]" data-testid="top-level-crew-details">
                                         {credits?.crew && (
                                             <>
                                                 <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />

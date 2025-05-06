@@ -57,7 +57,7 @@ export const CastMember = ({ cast, creditTitle, className, topLevel }: CastMembe
     }
 
     return (
-        <div className={`flex ${columns} gap-2 p-0 m-0 items-baseline ${className}`}>
+        <div className={`flex ${columns} gap-2 p-0 m-0 items-baseline ${className}`} data-testid={`credit-cast-role-${creditTitle.toLowerCase().replace(/\s+/g, '-')}`}>
             <h3 className={`${creditTitleSize} font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase m-0 p-0 text-right sm:text-left flex-1 sm:flex-initial`}>
                 {creditTitle}
             </h3>

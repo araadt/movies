@@ -116,7 +116,8 @@ export default function SearchResults({
 
     return (
         <div className="flex flex-col gap-4 w-full h-full">
-            <h1 className="text-3xl lg:text-2xl text-pretty text-center leading-6 w-full" >I think <span className="font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-4xl lg:text-3xl  font-semibold">{query.toLocaleUpperCase("en-US")}</span> is a great idea</h1>
+            <h1 className="sr-only" data-testid="search-results-title">Search Results</h1>
+            <h2 className="text-3xl lg:text-2xl text-pretty text-center leading-6 w-full" data-testid="search-results-header">I think <span className="font-noto-sans-display col-span-1 font-stretch-ultra-condensed text-4xl lg:text-3xl  font-semibold" data-testid="search-results-title-query">{query.toLocaleUpperCase("en-US")}</span> is a great idea</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 items-center lg:items-baseline justify-between">
                 <div className="col-span-1 flex justify-center lg:justify-start items-center gap-2 lg:min-h-[100px]">
 
@@ -172,16 +173,17 @@ export default function SearchResults({
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" data-testid="search-results-list">
                     {/* Movie Results */}
                     {sortedMovies.length > 0 && (
                         <>
-                            <h2 id="movie-results" className="col-span-full text-xl font-semibold">Movies</h2>
+                            <h2 id="movie-results" className="col-span-full text-xl font-semibold" data-testid="movie-results-heading">Movies</h2>
                             {sortedMovies.map((result: MovieResult) => (
                                 <Link
                                     href={`/film/${result.id}`}
                                     key={result.id}
                                     prefetch={false}
+                                    data-testid={`movie-result-${result.id}`}
                                 >
                                     <FilmCardWrapper
                                         film={result.id}
@@ -196,12 +198,13 @@ export default function SearchResults({
                     {/* TV Show Results */}
                     {sortedTV.length > 0 && (
                         <>
-                            <h2 id="tv-results" className="col-span-full text-xl font-semibold">TV Shows</h2>
+                            <h2 id="tv-results" className="col-span-full text-xl font-semibold" data-testid="tv-results-heading">TV Shows</h2>
                             {sortedTV.map((result: TVResult) => (
                                 <Link
                                     href={`/tv/${result.id}`}
                                     key={result.id}
                                     prefetch={false}
+                                    data-testid={`tv-result-${result.id}`}
                                 >
                                     <FilmCardWrapper
                                         film={result.id}
