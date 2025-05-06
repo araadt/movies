@@ -23,15 +23,15 @@ export default function NewReleases({ queryQuantity, displayQuantity, variant }:
             try {
                 console.log('Fetching films...');
                 const { data, error } = await fetchNowPlayingMovies(1);
-                
+
                 if (error) {
                     throw new Error(error);
                 }
-                
+
                 if (!data?.results) {
                     throw new Error('Invalid API response format');
                 }
-                
+
                 const fetchedFilms = data.results.slice(0, queryQuantity);
                 console.log('Sliced films:', fetchedFilms);
                 setFilms(fetchedFilms);
@@ -77,14 +77,17 @@ export default function NewReleases({ queryQuantity, displayQuantity, variant }:
 
     return (
         <div className="flex flex-col gap-4 w-full h-full justify-between">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 min-h-[540px] justify-between my-auto content-center">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 my-auto justify-center items-center">
                 {currentFilms.map((film) => (
                     <Link href={`/film/${film.id}`} key={film.id}>
                         <FilmCardWrapper film={film.id} variant="poster" mediaType="movie" />
                     </Link>
                 ))}
+                <div onClick={handleLoadMore} className="flex lg:hidden my-auto w-full h-full bg-background/50 border border-foreground/20 items-center justify-center ">
+                    <p className="text-lg">Load More</p>
+                </div>
             </div>
-            <div className="flex justify-end my-auto w-full">
+            <div className="hidden lg:flex justify-center my-auto w-full mb-8">
                 <Button
                     onClick={handleLoadMore}
                     variant="outline"
