@@ -207,8 +207,9 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
             case 'poster':
                 return (
                     <article
-                        className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end bg-cover bg-center relative transition-transform duration-300 border border-foreground/10 rounded-xs"
+                        className="group flex flex-col gap-2 p-4 aspect-[2/3] justify-end relative transition-transform duration-300 border border-foreground/10 rounded-xs bg-background"
                     >
+                        <div className="absolute inset-0 bg-[url('/images/2001_blur.png')] bg-cover bg-center bg-no-repeat opacity-30" />
                         {media.poster_path && (
                             <Image
                                 src={`https://image.tmdb.org/t/p/w500${media.poster_path}`}
@@ -227,10 +228,10 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
 
                         <div className="flex items-baseline justify-between gap-2">
                             {/* title */}
-                            <h3 className="text-2xl font-medium text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300 text-pretty" data-testid="media-title">{media.title} <span className="text-xs text-foreground/90" data-testid="media-release-date">{media.release_date ? `(${media.release_date.split('-')[0]})` : ''}</span></h3>
+                            <h3 className="text-2xl font-medium text-foreground z-10 opacity-20 group-hover:opacity-100 transition-opacity duration-300 text-pretty" data-testid="media-title">{media.title} <span className="text-xs text-foreground/90" data-testid="media-release-date">{media.release_date ? `(${media.release_date.split('-')[0]})` : ''}</span></h3>
 
                             {/* flag icon -- where it was made */}
-                            <p className="text-sm text-white z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin" data-testid="media-origin-country">{media.origin_country?.[0] || 'Unknown'}</p>
+                            <p className="text-sm text-foreground z-10 opacity-10 group-hover:opacity-100 transition-opacity duration-300" data-title={media.origin_country?.[0] || 'Unknown'} data-alt="country of origin" data-testid="media-origin-country">{media.origin_country?.[0] || 'Unknown'}</p>
                         </div>
                     </article>
                 )
