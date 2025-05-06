@@ -1,6 +1,7 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Geist, Inter, Noto_Sans, Noto_Sans_Display, Work_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -62,60 +63,62 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground h-full w-full whitespace-pre-wrap">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <PostHogProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
 
-          {/* TODO: */}
-          {/* This grid setup is a bit bonkers and needs to be centralized somewhere. */}
-          {/* The goal is to create space for metadata on the sides at larger breakpoints. */}
+            {/* TODO: */}
+            {/* This grid setup is a bit bonkers and needs to be centralized somewhere. */}
+            {/* The goal is to create space for metadata on the sides at larger breakpoints. */}
 
-          <main className="min-h-screen h-full w-full flex flex-col items-center justify-center">
-            <nav id="nav-bar" className="w-full flex items-center justify-between text-sm md:text-base border-b border-b-foreground/10 min-h-16 sm:min-h-24 m-0 p-0 px-5">
-              <div className="flex justify-center sm:justify-start items-center gap-4
-                    col-span-full sm:col-span-1 lg:col-span-2 col-start-1 lg:col-start-2
-                    m-0 p-0 me-2 text-left">
-                <Link className="text-xs sm:text-lg" href={"/"}>Andy's Films</Link>
+            <main className="min-h-screen h-full w-full flex flex-col items-center justify-center">
+              <nav id="nav-bar" className="w-full flex items-center justify-between text-sm md:text-base border-b border-b-foreground/10 min-h-16 sm:min-h-24 m-0 p-0 px-5">
+                <div className="flex justify-center sm:justify-start items-center gap-4
+                      col-span-full sm:col-span-1 lg:col-span-2 col-start-1 lg:col-start-2
+                      m-0 p-0 me-2 text-left">
+                  <Link className="text-xs sm:text-lg" href={"/"}>Andy's Films</Link>
+                </div>
+
+                <div className="
+                      flex justify-center sm:justify-end items-center gap-4 
+                      col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
+                      p-0 ">
+                  <SearchBar variant="header" />
+                  {/* <HeaderAuth /> */}
+                  <ThemeSwitcher />
+                </div>
+
+              </nav>
+
+              <div className="flex-1 w-full h-full flex flex-col gap-4 items-center p-5 py-0 sm:py-5">
+                {children}
               </div>
 
-              <div className="
-                    flex justify-center sm:justify-end items-center gap-4 
-                    col-span-full sm:col-span-1 lg:col-span-2 -col-end-1 lg:-col-end-2
-                    p-0 ">
-                <SearchBar variant="header" />
-                {/* <HeaderAuth /> */}
-                <ThemeSwitcher />
-              </div>
-
-            </nav>
-
-            <div className="flex-1 w-full h-full flex flex-col gap-4 items-center p-5 py-0 sm:py-5">
-              {children}
-            </div>
-
-            <footer id="footer" className="w-full flex flex-col sm:flex-row gap-2 items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
-              <div className="flex flex-row gap-2 items-baseline">
-                <p>
-                  Made by Andy
-                </p>
-                <p>
-                  May 2025
-                </p>
-              </div>
-              <div className="flex gap-4 items-baseline justify-end">
-                <p>
-                  API provided by <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie DB</Link>
-                </p>
-                <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">
-                  <Image src="/assets/logos/tmdb-logo.svg" alt="The Movie DB" width={100} height={100} />
-                </Link>
-              </div>
-            </footer>
-          </main>
-        </ThemeProvider>
+              <footer id="footer" className="w-full flex flex-col sm:flex-row gap-2 items-baseline justify-between border-t text-xs p-5 text-muted-foreground/50">
+                <div className="flex flex-row gap-2 items-baseline">
+                  <p>
+                    Made by Andy
+                  </p>
+                  <p>
+                    May 2025
+                  </p>
+                </div>
+                <div className="flex gap-4 items-baseline justify-end">
+                  <p>
+                    API provided by <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">The Movie DB</Link>
+                  </p>
+                  <Link href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">
+                    <Image src="/assets/logos/tmdb-logo.svg" alt="The Movie DB" width={100} height={100} />
+                  </Link>
+                </div>
+              </footer>
+            </main>
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html >
   );
