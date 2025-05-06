@@ -12,16 +12,31 @@ Resource needed for the project is movie api, examples include Imdb, MovieDB etc
 - ✅ User can click on any of the movie to go to their own separate page
 - ✅ User can then see all about the movie ratings, about, actors present on each separate movie page
  
+Pages worth visting:
+   - [https://movies.moonshot.earth/](movies.moonshot.earth/) Visit main page for an overview of API results from the /now_playing endpoint
+   - [https://movies.moonshot.earth/search](/search) Search for a film or tv show of your choosing
+   - [https://movies.moonshot.earth/search/star%20trek](/search/star%20trek) 
+      - search results for a given series, returning Film and TV results, sorted by Popularity (with the option to toggle by Release Date)
+      - At the bottom of the page, you may get the next page each of Film and TV results
+      - If you enter `Khan` in the ==Filter by…== section and you will see no results within the first 40 responses. You will be prompted to combine your search terms.
+   - [https://movies.moonshot.earth/film/154](/film/154) Select a film to get it's metadata.
+   - Click on any Cast or Crew member to view their details, and, from a given [https://movies.moonshot.earth/people/1749](`/person`) page, you may in turn view their biography, as well as their combined film and television cast and crew credits. 
+
+The site was designed with responsive breakpoints. Mobile could still use a little love.
+
 ### Stretch Goals:
 - ✅ User can filter movies by partial text string
 - ✅ Implement proper pagination
+
+The following items were left out in the interest of efficiency:
 - User can create an account
 - User can create their own watch list
 - User can review movies
  
 ### Bonus features:
-- Add some Playwright tests to run your tests automatically
-- Illustrate how we can utilize NextJS for this challenge (Specifically service-side rendering)
+- ✅ Add some Playwright tests to run your tests automatically
+- ✅ Illustrate how we can utilize NextJS for this challenge (Specifically service-side rendering)
+   - API calls are all happening server-side, while the client-side handles the display logic. Among other things, this keeps our API key private and hidden from the end-user, as well as enables query-response caching in NextJS. The caching has not been fine-tuned in this case, but I have begun configuring for a general 5- and 60-minute response strategy that would allow for high- and low-velocity information queries.
  
 ### Useful links and resources:
 [MovieDB Api](https://developers.themoviedb.org/3)
