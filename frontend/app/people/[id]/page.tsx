@@ -71,7 +71,11 @@ const BioDetail = ({ label, value, person, className }: { label: string, value: 
     }
 
     if (label === "Also Known As") {
-        value = value.join(", ").replace(/,/g, ", ");
+        const maxNames = 3;
+        const names = value.map((name: string) => name.trim());
+        value = names.length > maxNames
+            ? names.slice(0, maxNames).join(", ") + "..."
+            : names.join(", ");
     }
 
     return (
