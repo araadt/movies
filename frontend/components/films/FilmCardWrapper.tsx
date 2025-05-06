@@ -6,6 +6,7 @@ import { TVDetails } from "@/types/tvDetails";
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import { fetchMediaData } from "@/app/actions";
 import FilmCard from "./FilmCard";
+import { Skeleton } from "../ui/skeleton";
 
 type FilmCardWrapperProps = {
     film: string | number;
@@ -24,7 +25,7 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
             try {
                 const filmId = typeof film === 'string' ? parseInt(film, 10) : film;
                 const result = await fetchMediaData(filmId, mediaType);
-                
+
                 if (result.error) {
                     setError(result.error);
                 } else if (result.data) {
@@ -32,8 +33,8 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
                     setCredits(result.creditData);
 
                     if (process.env.NODE_ENV === 'development') {
-                        const title = mediaType === 'movie' 
-                            ? (result.data as FilmDetails).title 
+                        const title = mediaType === 'movie'
+                            ? (result.data as FilmDetails).title
                             : (result.data as TVDetails).name;
                         console.log('Loaded data for:', title);
                     }
@@ -47,7 +48,7 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
         };
 
         loadData();
-    }, [ mediaType]);
+    }, [film, mediaType]);
 
     if (error) {
         return (
@@ -67,7 +68,10 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
     }
 
     if (isLoading || !filmData || !credits) {
-        return 
+        if (variant === 'poster') {
+            return <Skeleton className="aspect-[2/3] w-full" />;
+        }
+        return null;
     }
 
     // Transform TV data to match film data structure if needed
