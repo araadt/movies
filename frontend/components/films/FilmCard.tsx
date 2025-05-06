@@ -11,7 +11,7 @@ import FluidColumn from "@/components/layout/column-wrapper";
 import CrewMember from "./CrewMember";
 import { CastMember } from "./CastMember";
 import { Badge } from "../ui/badge";
-import { Clock, Star, ArrowUpRight } from 'lucide-react';
+import { Clock, Star, ArrowDown } from 'lucide-react';
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
@@ -53,9 +53,9 @@ export const PosterOrBioPhoto = ({ film, className }: { film: string, className?
 
 export const CastAndCrewTitle = ({ title, className }: { title: string, className?: string }) => {
     return (
-        <div className={`flex gap-[.5em] relative bottom-[0.25em] self-baseline items-baseline me-[1rem] ${className}`}>
+        <div className={`flex gap-[.5em] relative bottom-[0.25em] self-baseline items-baseline me-0 sm:me-[.8625rem] w-full  justify-center sm:justify-end ${className}`}>
             <h2
-                className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold m-0 p-0 self-baseline uppercase ${className}`}
+                className={`text-2xl font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold m-0 p-0 self-baseline uppercase justify-center sm:justify-start ${className}`}
                 data-id={`credit-title-${title}`}
                 data-testid={`credit-title`}
                 data-title={title}
@@ -190,11 +190,11 @@ const Votes = ({ data }: { data: FilmDetails }) => {
 
 const ViewMoreLink = ({ href, text, className }: { href: string, text: string, className?: string }) => {
     return (
-        <div className="col-span-full gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6">
-            <div className="col-start-1 sm:-col-start-1 md:-col-start-2 mt-4 flex items-center gap-1 font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase">
-                <ArrowUpRight className="w-fit h-fit" />
-                <Link href={href} className="flex items-center gap-2">
-                    {text}
+        <div className="col-span-full gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 3xl:grid-cols-6 ">
+            <div className="col-start-1 sm:-col-start-1 md:-col-start-2 mt-4 flex items-center gap-1 font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 hover:text-foreground transition-all duration-300 uppercase justify-center sm:justify-start">
+                <Link href={href} className="flex items-center gap-1 scroll-smooth">
+                    <ArrowDown className="w-4 h-4 hidden sm:block" />
+                    <span className="hover:underline">{text}</span>
                 </Link>
             </div>
         </div>
@@ -276,17 +276,17 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
 
                                     {/* film metadata */}
                                     <div className="flex flex-col mb-4">
-                                        <div className="flex gap-4 font-[500] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start text-xl">
+                                        <div className="flex gap-4 font-[500] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-center sm:justify-start text-xl">
                                             <GenreList data={media} />
                                         </div>
-                                        <div className="flex gap-4 font-[450] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start">
+                                        <div className="flex gap-4 font-[450] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-center sm:justify-start">
                                             <Runtime data={media} />
                                             <SpokenLanguages data={media} />
                                             <AgeRating data={media} />
                                             <OriginCountry data={media} />
                                             <Rating data={media} />
                                         </div>
-                                        <div className="flex gap-4 font-[550] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-start">
+                                        <div className="flex gap-4 font-[550] font-noto-sans-display font-stretch-ultra-condensed uppercase items-center justify-center sm:justify-start">
                                             {/* <ProductionCompanies data={filmData} /> */}
                                             {/* <OriginalLanguage data={filmData} /> */}
                                             {/* <ReleaseStatus data={filmData} /> */}
@@ -297,7 +297,7 @@ const FilmCard = ({ media, credits, variant, mediaType }: FilmCardProps) => {
                                     </div>
 
                                     {/* top-level crew details */}
-                                    <div className="flex flex-wrap w-full max-w-[110ch]" data-testid="top-level-crew-details">
+                                    <div className="flex flex-wrap w-full max-w-[110ch] justify-center sm:justify-start" data-testid="top-level-crew-details">
                                         {credits?.crew && (
                                             <>
                                                 <CrewMember crew={credits.crew} creditTitle="Director" className="w-full pb-4" topLevel />
