@@ -337,6 +337,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         console.info(credits);
     }
 
+    const slugifyPersonName = person.name.toLowerCase().replace(/ /g, '-');
+    const personDBEditLink = `https://www.themoviedb.org/person/${id}-${slugifyPersonName}/edit`;
+
     return (
         <>
             <FluidColumn
@@ -382,7 +385,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                             <h2
                                 className="font-noto-sans-display font-stretch-ultra-condensed text-foreground/80 font-semibold uppercase">Biography</h2>
                             <div id="overview">
-                                {biography ? <TruncatedBio text={biography} className="text-xl md:text-2xl" /> : null}
+                                {biography ? <TruncatedBio text={biography} className="text-xl md:text-2xl" /> : <p className="text-xl md:text-2xl">No biography found for {person.name}. Perhaps you could{" "}<Link href={personDBEditLink} className="text-blue-500 hover:text-blue-600">add one on TMDb</Link>.</p>}
                             </div>
                         </div>
                     </div>
