@@ -36,7 +36,7 @@ export default function SearchBar({ variant }: { variant?: "header" | "standard"
     })
 
     // if we're on the main / or the /search page, we will hide the header search bar variant
-    const isHidden = variant === "header" && (pathname === "/" || pathname.startsWith("/search"));
+    const isHidden = variant === "header" && (pathname === "/");
 
     function onSubmit(values: z.infer<typeof formSchema>) {
         try {
