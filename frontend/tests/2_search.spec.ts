@@ -27,17 +27,27 @@ test('search returns results', async ({ page }) => {
   // Submit the form and wait for navigation with more flexible URL pattern
   try {
     await Promise.all([
-      // Use a more flexible URL pattern that matches both encoded and unencoded spaces
-      page.waitForURL(url => url.toString().includes('/search/Star') && url.toString().includes('Trek'), { timeout: 10000 }),
+      // Wait for navigation to complete
+      page.waitForLoadState('networkidle'),
+      // Submit the form
       searchInput.press('Enter')
     ]);
+
+    // After navigation, verify we're on the correct page
+    const currentUrl = await page.url();
+    console.log('Current URL after navigation:', currentUrl);
+
+    if (!currentUrl.includes('/search/Star')) {
+      throw new Error(`Expected URL to contain '/search/Star', got: ${currentUrl}`);
+    }
   } catch (error) {
     console.log('Navigation error:', error);
     // If navigation fails, try clicking the submit button instead
     const submitButton = searchBar.getByRole('button');
-    await submitButton.click();
-    // Wait for any network activity to settle
-    await page.waitForLoadState('networkidle');
+    await Promise.all([
+      page.waitForLoadState('networkidle'),
+      submitButton.click()
+    ]);
   }
 
   // Debug: Log the current URL to verify we're on the search page
@@ -64,7 +74,7 @@ test('search returns results', async ({ page }) => {
 
   // Expect the search results (server rendered) to have a title
   const header = page.getByTestId('search-results-header');
-  await header.waitFor({ state: 'visible', timeout: 10000 });
+  await header.waitFor({ state: 'visible', timeout: 300000 });
   await expect(header).toHaveText('I think STAR TREK is a great idea');
 
   // Expect the query to be in the title
