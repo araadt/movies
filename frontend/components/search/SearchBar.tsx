@@ -9,11 +9,9 @@ import { Search } from "lucide-react";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
 } from "@/components/ui/form"
 
 // ZOD for form validation
@@ -38,12 +36,18 @@ export default function SearchBar({ variant }: { variant?: "header" | "standard"
     })
 
     // if we're on the main / or the /search page, we will hide the header search bar variant
-    const isHidden = variant === "header" && (pathname === "/" || pathname === "/search");
+    const isHidden = variant === "header" && (pathname === "/" || pathname.startsWith("/search"));
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(`Searching for ${values.query}`);
-        router.push(`/search/${values.query}`);
-        form.reset();
+        try {
+            console.log(`Searching for ${values.query}`);
+            // Ensure the query is properly encoded
+            const encodedSearchQuery = encodeURIComponent(values.query.trim());
+            router.push(`/search/${encodedSearchQuery}`);
+            form.reset();
+        } catch (error) {
+            console.error('Error during search navigation:', error);
+        }
     }
 
     return (
