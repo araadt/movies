@@ -143,31 +143,3 @@ export async function fetchNowPlayingMovies(page: number = 1) {
     return { data: null, error: error instanceof Error ? error.message : 'An unknown error occurred' };
   }
 }
-
-export async function fetchMediaData(filmId: number, mediaType: 'movie' | 'tv') {
-  try {
-    let data = null;
-    let creditData = null;
-
-    if (mediaType === 'movie') {
-      [data, creditData] = await Promise.all([
-        getFilmDetails(filmId),
-        getFilmCredits(filmId)
-      ]);
-    } else {
-      [data, creditData] = await Promise.all([
-        getTVDetails(filmId),
-        getTVCredits(filmId)
-      ]);
-    }
-
-    return { data, creditData, error: null };
-  } catch (error) {
-    console.error('Error fetching media data:', error);
-    return {
-      data: null,
-      creditData: null,
-      error: error instanceof Error ? error.message : 'An unknown error occurred'
-    };
-  }
-}

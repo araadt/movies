@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FilmDetails } from "@/types/movieDetails";
 import { TVDetails } from "@/types/tvDetails";
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
-import { fetchMediaData } from "@/app/actions";
+import { fetchMediaData } from "@/lib/tmdb/fetchMediaData";
 import FilmCard from "./FilmCard";
 import { Skeleton } from "../ui/skeleton";
 
