@@ -25,7 +25,7 @@ export default function Home() {
             </div>
 
             <Hero />
-            <main className="flex-1 flex flex-col gap-4 w-full h-full">
+            <main className="flex-1 flex flex-col gap-4 w-full h-full items-center justify-center">
                 <NewReleases
                     queryQuantity={20}
                     displayQuantity={5}
