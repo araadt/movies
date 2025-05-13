@@ -1,10 +1,11 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import FilmCardWrapper from '@/components/films/FilmCardWrapper';
 import { FilmSummary } from '@/types/movieDetails';
 import { fetchNowPlayingMovies } from '@/app/actions';
+import { FilmCardSkeleton } from "./FilmCard";
 
 interface NewReleasesProps {
     queryQuantity: number;
@@ -76,18 +77,20 @@ export default function NewReleases({ queryQuantity, displayQuantity, variant }:
     console.log('Current films to display:', currentFilms);
 
     return (
-        <div className="flex flex-col gap-4 w-full h-full justify-between">
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 my-auto justify-center items-center">
-                {currentFilms.map((film) => (
-                    <Link href={`/film/${film.id}`} key={film.id}>
-                        <FilmCardWrapper film={film.id} variant="poster" mediaType="movie" />
-                    </Link>
-                ))}
+        <div className="flex flex-col gap-4 w-full min-h-[500px] h-full justify-between items-center">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-2 justify-between items-center w-full">
+                <Suspense fallback={<FilmCardSkeleton />}>
+                    {currentFilms.map((film) => (
+                        <Link href={`/film/${film.id}`} key={film.id}>
+                            <FilmCardWrapper film={film.id} variant="poster" mediaType="movie" />
+                        </Link>
+                    ))}
+                </Suspense>
                 <div onClick={handleLoadMore} className="flex lg:hidden my-auto w-full h-full bg-background/50 border border-foreground/20 items-center justify-center ">
                     <p className="text-lg">Load More</p>
                 </div>
             </div>
-            <div className="hidden lg:flex justify-center my-auto w-full mb-8">
+            {films.length > 0 && (
                 <Button
                     onClick={handleLoadMore}
                     variant="outline"
@@ -95,7 +98,7 @@ export default function NewReleases({ queryQuantity, displayQuantity, variant }:
                 >
                     Load More
                 </Button>
-            </div>
+            )}
         </div>
     );
 }

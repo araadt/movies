@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { FilmDetails } from "@/types/movieDetails";
 import { TVDetails } from "@/types/tvDetails";
 import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import { fetchMediaData } from "@/lib/tmdb/fetchMediaData";
-import FilmCard from "./FilmCard";
+import FilmCard, { FilmCardSkeleton } from "./FilmCard";
 import { Skeleton } from "../ui/skeleton";
 
 type FilmCardWrapperProps = {
@@ -116,11 +116,13 @@ export default function FilmCardWrapper({ film, variant, mediaType }: FilmCardWr
     } as FilmDetails & TVDetails : filmData as FilmDetails;
 
     return (
-        <FilmCard
-            media={media}
-            credits={credits}
-            variant={variant}
-            mediaType={mediaType}
-        />
+        <Suspense fallback={<FilmCardSkeleton />}>
+            <FilmCard
+                media={media}
+                credits={credits}
+                variant={variant}
+                mediaType={mediaType}
+            />
+        </Suspense>
     );
 } 
