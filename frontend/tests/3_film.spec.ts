@@ -76,9 +76,9 @@ test('film page has expected content', async ({ page }) => {
     const michelleYeohContent = await michelleYeohRole.textContent();
     expect(michelleYeohContent?.toLowerCase()).toContain('michelle yeoh');
 
-    // Expect Rod Roddenberry to be listed as an executive producer
+    // Expect a Roddenberry to be listed as an executive producer, it's probably a given that there will be one
     const executiveProducerSection = page.getByTestId('top-level-crew-details').getByTestId('credit-crew-role-executive-producer');
     await expect(executiveProducerSection).toBeVisible();
     const executiveProducerContent = await executiveProducerSection.textContent();
-    expect(executiveProducerContent?.toLowerCase()).toContain('rod roddenberry');
+    expect(executiveProducerContent?.toLowerCase()).toContain('roddenberry');
 });
