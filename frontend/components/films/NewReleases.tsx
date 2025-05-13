@@ -94,7 +94,7 @@ export default function NewReleases({ queryQuantity, displayQuantity, variant }:
                 <Button
                     onClick={handleLoadMore}
                     variant="outline"
-                    className="w-fit"
+                    className="w-fit hidden lg:block mb-auto mt-8"
                 >
                     Load More
                 </Button>
